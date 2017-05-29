@@ -1,0 +1,34 @@
+#Change CI_ENV from developemnt to production if it running on real server
+#SetEnv CI_ENV production
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # RewriteRule .* maintenance.html [NC]
+  # Original Cache Path ^/?$
+  # RewriteRule !^(board)($|/) https://www.facebook.com/tafasu/posts/1881886878714673 [L,R=302]
+  # !IMPORTANT! Set your RewriteBase here and don't forget trailing and leading
+  #  slashes.
+  # If your page resides at
+  #  http://www.example.com/mypage/test1
+  # then use
+  # RewriteBase /mypage/test1/
+  #Anti Neko-miku
+  RewriteBase /
+  RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$
+  RewriteRule .* https://assets.pureapp.in.th/neko508.html [R=302,L]
+  #Codeigniter Path Redirecter
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php?/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+  # If we don't have mod_rewrite installed, all 404's
+  # can be sent to index.php, and everything works as normal.
+  # Submitted by: ElliotHaughin
+
+  ErrorDocument 404 /index.php
+</IfModule>
+
+#RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
+#RewriteCond %{REQUEST_URI} !^/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
+#RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
