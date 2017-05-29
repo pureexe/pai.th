@@ -49,6 +49,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
+/**
+* sub.th note:
+* codeigniter not support UTF-8 routing. so we have no choice.
+**/
 $route['default_controller'] = 'welcome';
+$route[urlencode('จัดการ')] = 'SpaCtrl/user_manage';
+$route[urlencode('ผู้ดูแล')] = 'SpaCtrl/admin_manage';
+$route['(.+)'] = 'RedirectorCtrl';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

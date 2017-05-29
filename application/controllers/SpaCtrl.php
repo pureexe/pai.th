@@ -2,15 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
-* @class: RedirectorCtrl
+* use to serve single page app
+* @class: SpaCtrl
 **/
 class RedirectorCtrl extends CI_Controller {
   public function __construct()
   {
-    parent::__construct();
-    $this->load
-      ->model('Path')
-      ->helpers("cloudflare");
+    $this->load->helpers("cloudflare");
     use_cache_header();
   }
   /**
@@ -19,6 +17,13 @@ class RedirectorCtrl extends CI_Controller {
   **/
   public function index()
 	{
-    echo "redirector: ".urldecode($this->uri->uri_string());
+
 	}
+  public function user_manage()
+  {
+    $this->load->view('user_manage');
+  }
+  public function admin_manage(){
+    $this->load->vuew('admin_manage');
+  }
 }
