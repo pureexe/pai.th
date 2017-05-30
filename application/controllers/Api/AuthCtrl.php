@@ -42,6 +42,7 @@ class AuthCtrl extends CI_Controller {
   }
   public function logout()
   {
+    $this->load->database()->model('Rest');
     $this->load->library('session');
     $this->session->unset_userdata('userid');
     session_write_close();
