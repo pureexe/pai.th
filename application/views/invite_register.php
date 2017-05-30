@@ -10,8 +10,8 @@
   </head>
   <body>
     <h1>ซับ.ไทย</h1>
-    <div class=" mdl-card mdl-shadow--2dp" style="padding:20px;" id="app">
-      <form action="wewe" method="post" v-on:submit="onSubmit">
+    <div class="card mdl-card mdl-shadow--2dp" id="app">
+      <form action="" method="post" v-on:submit="onSubmit">
         <div class="mdl-textfield mdl-js-textfield">
           <span>ชื่อผู้ใช้:</span> <span><?=$username?></span>
         </div>
@@ -28,8 +28,8 @@
         </div>
         <input type="hidden" name="invite_token" value="<?=$invite_token?>" />
         <center>
-          <p style="color:red" v-show="mismatch">รหัสผ่านไม่ตรงกัน</p>
-          <p style="color:red" v-show="emptyPassword">กรุณากรอกรหัสผ่าน</p>
+          <p class="red" v-show="mismatch">รหัสผ่านไม่ตรงกัน</p>
+          <p class="red" v-show="emptyPassword">กรุณากรอกรหัสผ่าน</p>
           <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" :disabled="!submitable">
             สมัครสมาชิก
           </button>

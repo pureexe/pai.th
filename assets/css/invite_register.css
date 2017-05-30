@@ -11,3 +11,9 @@ body{
   justify-content: center; /*centers items on the line (the x-axis by default)*/
   align-items: center; /*centers items on the cross-axis (y by default)*/
 }
+.card{
+  padding:20px;
+}
+.red{
+  color:red;
+}
