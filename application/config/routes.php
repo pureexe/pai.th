@@ -60,8 +60,12 @@ $route[urlencode('สมัคร')]['get'] = 'InviteCtrl/register';
 $route[urlencode('สมัคร')]['post'] = 'InviteCtrl/register_post';
 
 //API for private use only!
+$route['api/v1/user']['get'] = 'Api/UserCtrl';
+$route['api/v1/user/auth']['post'] = 'Api/AuthCtrl/signin';
+$route['api/v1/user/auth']['delete'] = 'Api/AuthCtrl/logout';
 $route['api/v1/user/create']['post'] = 'Api/UserCtrl/create';
-$route['form'] =  'welcome/form';
+$route['write'] =  'welcome/write';
+$route['read'] =  'welcome/read';
 
 $route['(.+)'] = 'RedirectorCtrl';
 $route['404_override'] = '';

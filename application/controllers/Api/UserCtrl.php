@@ -17,6 +17,11 @@ class UserCtrl extends CI_Controller {
     $this->load->model("User")->model("Rest");
     $this->load->library('form_validation');
 	}
+  public function index()
+  {
+    $user = $this->User->get();
+    $this->Rest->render($user);
+  }
   public function create()
   {
     $this->form_validation

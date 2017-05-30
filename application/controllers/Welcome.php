@@ -26,12 +26,26 @@ class Welcome extends CI_Controller {
  	}
 	public function index()
 	{
-
 		$this->form_validation->set_rules('username','username','required');
 		$this->load->view('welcome_message');
 	}
-	public function form()
+	public function write()
 	{
-		$this->Rest->render(array('id'=>1,'token'=>'กกดหฟหกผ'));
+		$this->load->library("session");
+		$this->load->library("session");
+		$this->session->set_userdata(array(
+			'userid' => 12355
+		));
+		session_write_close();
+	}
+	public function read()
+	{
+		$this->load->library('phpass');
+    $hash = $this->phpass->hash("a");
+		if($this->phpass->check("0805797336",'$2a$08$opzzjNKK15V0pcq/ykimmuh6I1sXLM1Di1F5ckvXegMBj4wDDzamC')){
+			echo "true";
+		}else{
+			echo "false";
+		}
 	}
 }

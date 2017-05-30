@@ -10,21 +10,18 @@ class User extends CI_Model {
     parent::__construct();
     $this->load->database();
   }
-  public function hello()
-  {
-    echo "hello";
-  }
   public function isAdmin()
   {
-
+    $user = $this->get();
+    if(empty($user)){
+      return false;
+    }else{
+      return $user['type'] == 'admin';
+    }
   }
   public function isSignIn()
   {
-
-  }
-  public function getUserId()
-  {
-
+    return !empty($this->getId());
   }
   /**
   * Warning form_validation is required before call this method
@@ -42,6 +39,7 @@ class User extends CI_Model {
       'username' => $username,
       'email' => $email,
       'password' => $hash,
+      'type' => 'user',
       'shorten_quota' => $this->config->item('shorten_quota')
     ));
     return intval($this->db->insert_id());
@@ -68,7 +66,7 @@ class User extends CI_Model {
   public function setPasswordInvite($invite_token,$password)
   {
     $this->load->library('phpass');
-    $hash = $this->phpass->hash($invite_token);
+    $hash = $this->phpass->hash($password);
     $this->db
       ->where('invite_token',$invite_token)
       ->update('user',array(
@@ -84,5 +82,26 @@ class User extends CI_Model {
       ->where('invite_token',$invite_token);
     $data = $query->get()->result_array();
     return empty($data)?null:$data[0];
+  }
+  public function getId()
+  {
+    $this->load->library('session');
+    session_write_close();
+    return $this->session->userid;
+  }
+  public function get()
+  {
+    $uid = $this->getId();
+    $query = $query = $this->db
+      ->select('id,username,email,type,shorten_quota')
+      ->from('user')
+      ->where('id',$uid);
+    $users = $query->get()->result_array();
+    if(empty($users)){
+      return null;
+    }else{
+        $users[0]['id'] = intval($users[0]['id']);
+        return $users[0];
+    }
   }
 }
