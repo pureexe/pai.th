@@ -11,22 +11,33 @@ class UserCtrl extends CI_Controller {
   * redirect traveller to promise land
   * @method index
   **/
-  public function index()
+  public function __construct()
 	{
-
+    parent::__construct();
+    $this->load->model("User")->model("Rest");
+    $this->load->library('form_validation');
 	}
   public function create()
   {
+    $this->form_validation
+      ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]')
+      ->set_rules('email', 'email', 'required|trim|valid_email|is_unique[user.email]');
+    if ($this->form_validation->run() == FALSE){
+      return $this->Rest->error(validation_errors(),1);
+    }
     $username = $this->input->post("username");
     $email = $this->input->post("email");
     $password = $this->input->post("password");
-    if(empty($user) || empty($email)){
-      //render error
-    }
+    //create random string if password not set
     if(empty($password)){
-      //create random string?
-      //$password =
+      $this->load->helper('string');
+      $password = random_string('alnum',8);
     }
-    //encrypted password
+    $id = $this->User->create($username,$email,$password);
+    $token = $this->User->generateInviteToken($id);
+    $this->Rest->render(array(
+      "id" => $id,
+      "invite_token" => $token
+    ));
   }
 }

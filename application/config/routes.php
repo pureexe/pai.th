@@ -56,6 +56,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route[urlencode('จัดการ')] = 'SpaCtrl/user_manage';
 $route[urlencode('ผู้ดูแล')] = 'SpaCtrl/admin_manage';
+$route[urlencode('สมัคร')] = 'InviteCtrl/register';
+
+//API for private use only!
+$route['api/v1/user/create']['post'] = 'Api/UserCtrl/create';
+$route['form'] =  'welcome/form';
+
 $route['(.+)'] = 'RedirectorCtrl';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
