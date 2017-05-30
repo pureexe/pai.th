@@ -18,13 +18,16 @@ class AuthCtrl extends CI_Controller {
       return $this->Rest->error('username and password is required for signin.');
     }
     $query = $this->db
-      ->select('id,password')
+      ->select('id,password,type')
       ->from('user')
       ->where('username',$username)
       ->or_where('email',$username);
     $users = $query->get()->result_array();
     if(empty($users)){
       return $this->Rest->error('username and password is incorect');
+    }
+    if($users[0]['type'] == 'ban' || $users[0]['type'] == 'disable'){
+      return $this->Rest->error('this user was disable');
     }
     $this->load->library('phpass');
     if($this->phpass->check($password,$users[0]['password'])){

@@ -61,11 +61,14 @@ $route[urlencode('สมัคร')]['post'] = 'InviteCtrl/register_post';
 
 //API for private use only!
 $route['api/v1/user']['get'] = 'Api/UserCtrl';
+$route['api/v1/user/list']['get'] = 'Api/UserCtrl/list'; //admin only!
+$route['api/v1/user']['put'] = 'Api/UserCtrl/update'; //admin only!
+$route['api/v1/user']['post'] = 'Api/UserCtrl/create'; //admin only!
 $route['api/v1/auth']['post'] = 'Api/AuthCtrl/signin';
 $route['api/v1/auth']['delete'] = 'Api/AuthCtrl/logout';
-$route['api/v1/user']['post'] = 'Api/UserCtrl/create';
-$route['api/v1/path']['get'] = 'Api/PathCtrl';
-$route['api/v1/path']['post'] = 'Api/PathCtrl';
+$route['api/v1/path']['get'] = 'Api/PathCtrl'; //get list
+$route['api/v1/path']['post'] = 'Api/PathCtrl/shorten';
+//debug
 $route['write'] =  'welcome/write';
 $route['read'] =  'welcome/read';
 
