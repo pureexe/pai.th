@@ -56,7 +56,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route[urlencode('จัดการ')] = 'SpaCtrl/user_manage';
 $route[urlencode('ผู้ดูแล')] = 'SpaCtrl/admin_manage';
-$route[urlencode('สมัคร')] = 'InviteCtrl/register';
+$route[urlencode('สมัคร')]['get'] = 'InviteCtrl/register';
+$route[urlencode('สมัคร')]['post'] = 'InviteCtrl/register_post';
 
 //API for private use only!
 $route['api/v1/user/create']['post'] = 'Api/UserCtrl/create';

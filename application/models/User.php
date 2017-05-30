@@ -65,9 +65,17 @@ class User extends CI_Model {
       ));
     return $token;
   }
-  public function setPasswordInvite($token,$password)
+  public function setPasswordInvite($invite_token,$password)
   {
-
+    $this->load->library('phpass');
+    $hash = $this->phpass->hash($invite_token);
+    $this->db
+      ->where('invite_token',$invite_token)
+      ->update('user',array(
+        'invite_token' => '',
+        'password' => $hash
+      ));
+    return empty($this->db->affected_rows());
   }
   public function getByInviteToken($invite_token){
     $query = $this->db

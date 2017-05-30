@@ -17,6 +17,8 @@ var app = new Vue({
         this.mismatch = true;
         this.submitable = false;
         event.preventDefault();
+      }else{
+        this.submitable = false;
       }
     },
     onKeyup: function(){

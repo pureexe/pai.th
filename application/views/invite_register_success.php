@@ -10,8 +10,15 @@
   </head>
   <body>
     <h1>ซับ.ไทย</h1>
-    <div class="card mdl-card mdl-shadow--2dp" id="app" style="color:red">
-      <?=$error_message?>
+    <div class="card mdl-card mdl-shadow--2dp" id="app">
+      <div style="display:block;padding-top: 10px;padding-bottom: 20px;">
+        <center>การลงทะเบียนเสร็จเรียบร้อย</center>
+      </div>
+      <div>
+        <center>
+          <a href="/จัดการ" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">เข้าสู่ระบบ</a>
+        </center>
+      </div>
     </div>
   </body>
 </html>

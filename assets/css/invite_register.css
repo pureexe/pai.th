@@ -13,6 +13,9 @@ body{
 }
 .card{
   padding:20px;
+  width: auto;
+  max-width: 320px;
+  min-height: 0;
 }
 .red{
   color:red;
