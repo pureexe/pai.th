@@ -36,11 +36,13 @@ class User extends CI_Model {
   public function create($username,$email,$password)
   {
     $this->load->library('phpass');
+    $his->load->config('subth');
     $hash = $this->phpass->hash($password);
     $this->db->insert('user',array(
       'username' => $username,
       'email' => $email,
-      'password' => $hash
+      'password' => $hash,
+      'shorten_quota' => $this->config->item('shorten_quota')
     ));
     return intval($this->db->insert_id());
   }

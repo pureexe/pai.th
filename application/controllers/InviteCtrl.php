@@ -14,7 +14,8 @@ class InviteCtrl extends CI_Controller {
 			if(empty($user)){
 				throw new Exception("บัตรเชิญของคุณไม่ถูกต้อง", 1);
 			}
-			$this->load->view('invite_register');
+			$user['invite_token'] = $invite_token;
+			$this->load->view('invite_register',$user);
 		}catch(Exception $e){
 			$this->load->view('invite_register_error',array(
 				'error_message' => $e->getMessage()
@@ -30,7 +31,7 @@ class InviteCtrl extends CI_Controller {
 				throw new Exception("คุณไม่ได้ใช้บัตรเชิญในการสมัครสมาชิก", 1);
 			}
 			if($this->User->setPasswordInvite($invite_token,$password)){
-				throw new Exception("บัตรเชิญของคุณไม่ถูกต้อง", 1);			
+				throw new Exception("บัตรเชิญของคุณไม่ถูกต้อง", 1);
 			}
 			$this->load->view('invite_register_success');
 		}catch(Exception $e){
