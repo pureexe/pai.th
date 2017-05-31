@@ -37,7 +37,6 @@ class PathCtrl extends CI_Controller {
     if($this->form_validation->run() == FALSE){
       return $this->Rest->error(validation_errors(),1);
     }
-    //ตรวจถ้าไม่เป็นแอดมินแล้วโควต้าน้อยกว่าที่กำหนดด้วยนะ
     $this->load->driver('cache',
         array(
           'adapter' => 'apc',
@@ -57,7 +56,7 @@ class PathCtrl extends CI_Controller {
         $fullUrl,
         $shortUrl
       );
-      $quota_use = $this->cache->get(
+      $quota_use = $this->cache->save(
         $this->user['username'],
         $quota_use+1,
         strtotime('tomorrow')-time()
@@ -71,22 +70,10 @@ class PathCtrl extends CI_Controller {
   }
   public function fullurl_check($fullURL)
   {
-    $hostname = array(
-      'tafasu.com',
-      'www.tafasu.com',
-      'mega.nz',
-      'mega.co.nz',
-      'drive.google.com',
-      'docs.google.com',
-      'app.koofr.net',
-      'k00.fr'
-    );
-    if(!in_array(parse_url($fullURL, PHP_URL_HOST),$hostname)){
-      //Admin can break the rule
-      if($this->User['type'] == 'admin'){
-        return true;
-      }
-      $this->form_validation->set_message('fullurl_check', 'Onky accepeted url from tafasu/koofr/mega/google drive');
+    $this->load->config('subth');
+    $hostname = $this->config->item('shorten_whitelist');
+    if($this->user['type'] == 'admin' && !in_array(parse_url($fullURL, PHP_URL_HOST),$hostname)){
+      $this->form_validation->set_message('fullurl_check', 'Only accepeted domainlist');
       return false;
     } else {
       return true;
