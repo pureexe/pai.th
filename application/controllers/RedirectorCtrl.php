@@ -8,7 +8,9 @@ class RedirectorCtrl extends CI_Controller {
   public function __construct()
   {
     parent::__construct();
-    $this->load->model('Path');
+    $this->load
+      ->model('Path')
+      ->helpers("cloudflare");
   }
   /**
   * redirect traveller to promise land
@@ -20,8 +22,7 @@ class RedirectorCtrl extends CI_Controller {
     if(!empty($fullUrl)){
       $this->load
         ->helper('url')
-        ->config('subth')
-        ->helpers("cloudflare");
+        ->config('subth');
       use_cache_header();
       redirect($fullUrl, 'location', $this->config->item('http_redirect_code'));
     }else{
