@@ -40,12 +40,13 @@ class Welcome extends CI_Controller {
 	}
 	public function read()
 	{
-		$this->load->library('phpass');
-    $hash = $this->phpass->hash("a");
-		if($this->phpass->check("0805797336",'$2a$08$opzzjNKK15V0pcq/ykimmuh6I1sXLM1Di1F5ckvXegMBj4wDDzamC')){
-			echo "true";
-		}else{
-			echo "false";
-		}
+		$tomorrowMidnight = strtotime('tomorrow');
+		$this->load->driver('cache',
+        array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'quota_use_')
+		);
+		$foo = $this->cache->get('foo');
+		$foo = empty($foo)?1:$foo+1;
+		$this->cache->save('foo', $foo, 60);
+		echo $foo;
 	}
 }

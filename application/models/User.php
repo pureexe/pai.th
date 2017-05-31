@@ -5,6 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 * @class: User
 **/
 class User extends CI_Model {
+  private $userid;
   public function __construct()
   {
     parent::__construct();
@@ -85,9 +86,12 @@ class User extends CI_Model {
   }
   public function getId()
   {
-    $this->load->library('session');
-    session_write_close();
-    return $this->session->userid;
+    if(empty($this->userid)){
+      $this->load->library('session');
+      session_write_close();
+      $this->userid = $this->session->userid;
+    }
+    return $this->userid;
   }
   public function get($uid)
   {

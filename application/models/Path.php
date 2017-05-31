@@ -24,18 +24,38 @@ class Path extends CI_Model {
     $data = $query->get()->result_array();
     return empty($data)?null:$data[0]['full'];
   }
-  public function shorten($fullPath,$customShortestPath)
+  public function shorten($uid,$fullPath,$customShortestPath)
   {
     $this->load->helper("thaistring");
+    $shortPath = "";
     if(empty($customShortestPath)){
       $shortPath = random_thai_string('carnum',5);
-      while()
+      while($this->isExist($shortPath)){
+        $shortPath = random_thai_string('carnum',5);
+      }
     }else{
       if($this->isExist($customShortestPath)){
         throw new Exception("Path: "+$customShortestPath+" is already exist.", 1);
       }else{
-        $this->point($fullUrl,$customShortestPath);
+        $shortPath = $customShortestPath;
       }
     }
+    $this->point($fullPath,$shortPath,$uid);
+  }
+  public function isExist($short)
+  {
+    $cnt = $this->db
+        ->where('short',$short)
+        ->count_all_results('path');
+    return $cnt>0;
+  }
+  public function point($fullUrl,$shortUrl,$uid)
+  {
+    $this->load->model('User');
+    $this->db->insert('path',array(
+      'owner' => empty($uid)?0:$uid,
+      'full' => $fullUrl,
+      'short' => $shortUrl
+    ))
   }
 }
