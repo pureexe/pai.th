@@ -8,6 +8,6 @@ if (!function_exists('use_cache_header'))
     if(ENVIRONMENT !== 'production'){
       return;
     }
-    //Implement cache header later
+    header("Cache-Control: max-age=31536000, min-fresh=7200, public");
   }
 }

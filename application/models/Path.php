@@ -12,7 +12,17 @@ class Path extends CI_Model {
   }
   public function getFull($path)
   {
-
+    // if have performace problem then we should implement Cache
+    // but we have to less inode so i will skip cache and believe
+    // in sql server performance
+    $query = $this->db
+      ->select('full')
+      ->from('path')
+      ->join('user','path.owner = user.id','left')
+      ->where('path.short',$path)
+      ->where('user.type !=','ban');
+    $data = $query->get()->result_array();
+    return empty($data)?null:$data[0]['full'];
   }
   public function shorten($fullPath)
   {
