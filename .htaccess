@@ -38,7 +38,7 @@
 #HTML static page cache
 <filesMatch "\.(html|htm)$">
   #Remove must-revalidate follow MDN docs // will undo if it take an error
-  Header set Cache-Control "max-age=31536000, min-fresh=7200, public"
+  #Header set Cache-Control "max-age=31536000, min-fresh=7200, public"
 </filesMatch>
 
 #RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$

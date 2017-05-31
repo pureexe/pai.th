@@ -1,1 +1,192 @@
-this is user manage
+<html lang="th">
+  <head>
+    <title>จัดการลิ้งค์ - ซับ.ไทย</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-indigo.min.css" />
+    <style>
+    .container{
+
+    }
+    .footer{
+          padding-top: 14px;
+          padding-bottom: 14px;
+          color: #777;
+          background-color: #eee;
+          cursor: default;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        .short-header{
+          margin: 0px;
+          color: #fff;
+          font-size: 30px;
+          font-weight: lighter;
+          cursor: default;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        .long-text-input{
+          width: calc(100% - 32px);
+          max-width: 550px;
+          height: 36px;
+          margin-right: 20px;
+          padding: 0 16px;
+          font-family: inherit;
+          font-size: 14px;
+          line-height: 36px;
+          vertical-align: middle;
+          border: none;
+          border-radius: 2px;
+          outline: none;
+          -webkit-transition: background-color .2s cubic-bezier(0.4,0,0.2,1),color .2s cubic-bezier(0.4,0,0.2,1);
+          transition: background-color .2s cubic-bezier(0.4,0,0.2,1),color .2s cubic-bezier(0.4,0,0.2,1);
+        }
+        .tagline{
+          color: #fff;
+          size: 14px;
+          padding-top:5px;
+        }
+        #on-modal-copy:focus:not(:active) {
+          background-color: rgba(0,0,0,0);
+        }
+        #on-modal-copy{
+          margin-top: -2px;
+        }
+        .copy-button{
+          margin-top: -2px;
+          color: #777;
+        }
+        .container {
+          padding-right: 15px;
+          padding-left: 15px;
+          margin-right: auto;
+          margin-left: auto;
+        }
+        @media (min-width: 768px) {
+          .container {
+            width: 750px;
+          }
+        }
+        @media (min-width: 992px) {
+          .container {
+            width: 970px;
+          }
+        }
+        @media (min-width: 1200px) {
+          .container {
+            width: 1170px;
+          }
+        }
+    </style>
+  </head>
+  <body>
+    <div id="user_manage">
+      <div class="mdl-layout mdl-js-layout">
+        <header class="" style="box-shadow:none;">
+          <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;background-color:#fff">
+            <span class="mdl-layout-title" style="color:#333">ซับ.ไทย</span>
+            <div class="mdl-layout-spacer"></div>
+            <div>
+              //อีเมล ออกจากระบบ
+            </div>
+          </div>
+        </header>
+        <main class="mdl-layout__content" style="flex: 1 0 auto;">
+          <div style="padding: 40px 0px 40px 0px;" class="mdl-color--primary mdl-shadow--2dp">
+            <div class="container">
+              <div>
+                <h2 class="short-header">ย่อลิ้งค์ให้ใช้ง่าย</h2>
+              </div>
+              <div>
+                <input type="text" class="long-text-input" placeholder="กรอก URL เต็มที่นี่" style="margin-top:10px;" v-model="fullURL" :disabled="shortening"></input>
+                <button :disabled="shortening" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: white;margin-top:10px;" v-on:click="addShortLink(fullURL)">
+                    ย่อลิ้งค์
+                </button>
+              </div>
+              <div class="tagline">
+                ขณะนี้ใช้ได้เพียง Google Drive, Koofr, Mega และ TAFASU เท่านั้น
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="container" style="padding-top: 40px;padding-bottom: 40px;">
+              <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
+                <thead style="background-color: #f5f5f5;">
+                  <tr>
+                    <th class="mdl-data-table__cell--non-numeric">ลิ้งค์เดิม</th>
+                    <th class="mdl-data-table__cell--non-numeric">สร้างเมื่อ</th>
+                    <th class="mdl-data-table__cell--non-numeric">ลิ้งค์สั้น</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="3" class="mdl-data-table__cell--non-numeric">
+                      <center>
+                        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+                      </center>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" class="mdl-data-table__cell--non-numeric">
+                      <center>
+                        ไม่มีรายการลิ้งค์ที่จะแสดง
+                      </center>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="mdl-data-table__cell--non-numeric">
+                      <!-- {{ path.full }} -->
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                      <!-- {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}} -->
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                      <!-- ซับ.ไทย/{{path.short}}
+                      <button v-bind:id="'tooltip-copy-'+index" class="copy-button mdl-button mdl-js-button mdl-button--icon"><i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i></button>
+                      <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+index" >
+                        คัดลอกลิ้งค์ย่อ
+                      </div>
+                    -->
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot style="background-color: #f5f5f5;">
+                  <tr>
+                    <td colspan="3">
+                      <div v-show="!isShowAll"><a href="#" v-on:click="loadAllPathData">แสดงข้อมูลทั้งหมด</a> (คำเตือน: ใช้ปริมาณข้อมูลมาก)</div>
+                      <div v-show="isShowAll">แสดงข้อมูลทั้งหมดแล้ว</div>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </main>
+        <footer>
+          This is a footer
+        </footer>
+      </div>
+    </div>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-resource"></script>
+    <script>
+      var app = new Vue({
+        el: '#user_manage',
+        data: {
+          page: "loading",
+          message: 'Hello Vue!',
+          email: "place holder",
+          fullURL: "",
+          shortening: false,
+        }
+      });
+    </script>
+  </body>
+</html>
