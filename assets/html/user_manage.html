@@ -87,109 +87,158 @@
   </head>
   <body>
     <div id="user_manage">
-      <div class="mdl-layout mdl-js-layout">
-        <header class="" style="box-shadow:none;">
-          <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;background-color:#fff">
-            <span class="mdl-layout-title" style="color:#333">ซับ.ไทย</span>
-            <div class="mdl-layout-spacer"></div>
-            <div>
-              //อีเมล ออกจากระบบ
-            </div>
-          </div>
-        </header>
-        <main class="mdl-layout__content" style="flex: 1 0 auto;">
-          <div style="padding: 40px 0px 40px 0px;" class="mdl-color--primary mdl-shadow--2dp">
-            <div class="container">
-              <div>
-                <h2 class="short-header">ย่อลิ้งค์ให้ใช้ง่าย</h2>
-              </div>
-              <div>
-                <input type="text" class="long-text-input" placeholder="กรอก URL เต็มที่นี่" style="margin-top:10px;" v-model="fullURL" :disabled="shortening"></input>
-                <button :disabled="shortening" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: white;margin-top:10px;" v-on:click="addShortLink(fullURL)">
-                    ย่อลิ้งค์
-                </button>
-              </div>
-              <div class="tagline">
-                ขณะนี้ใช้ได้เพียง Google Drive, Koofr, Mega และ TAFASU เท่านั้น
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="container" style="padding-top: 40px;padding-bottom: 40px;">
-              <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
-                <thead style="background-color: #f5f5f5;">
-                  <tr>
-                    <th class="mdl-data-table__cell--non-numeric">ลิ้งค์เดิม</th>
-                    <th class="mdl-data-table__cell--non-numeric">สร้างเมื่อ</th>
-                    <th class="mdl-data-table__cell--non-numeric">ลิ้งค์สั้น</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colspan="3" class="mdl-data-table__cell--non-numeric">
-                      <center>
-                        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
-                      </center>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="3" class="mdl-data-table__cell--non-numeric">
-                      <center>
-                        ไม่มีรายการลิ้งค์ที่จะแสดง
-                      </center>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="mdl-data-table__cell--non-numeric">
-                      <!-- {{ path.full }} -->
-                    </td>
-                    <td class="mdl-data-table__cell--non-numeric">
-                      <!-- {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}} -->
-                    </td>
-                    <td class="mdl-data-table__cell--non-numeric">
-                      <!-- ซับ.ไทย/{{path.short}}
-                      <button v-bind:id="'tooltip-copy-'+index" class="copy-button mdl-button mdl-js-button mdl-button--icon"><i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i></button>
-                      <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+index" >
-                        คัดลอกลิ้งค์ย่อ
-                      </div>
-                    -->
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot style="background-color: #f5f5f5;">
-                  <tr>
-                    <td colspan="3" style="padding-top:15px;padding-bottom:15px;">
-                      <div style="display: inline-block;">1-10 จาก 39</div>
-                      <div style="display: inline-block;">
-                        <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">chevron_left</i></button>
-                        <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">chevron_right</i></button>
-                      </div>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </main>
-        <footer style="padding-top: 10px;padding-bottom: 10px;color: #777;background-color: #eee;user-select: none;">
-          <div class="container">
-            <ul class="mdl-mini-footer__link-list">
-              <li style="margin-right:15px;">
-                <a href="https://ซับ.ไทย">ซับ.ไทย</a>
-              </li>
-              <li style="margin-right:15px;">
-                <a href="https://www.tafasu.com">TAFASU</a>
-              </li>
-            </ul>
-          </div>
-        </footer>
-      </div>
+      <page-loading></page-loading>
+      <page-manage v-if="false"></page-manage>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vue-resource"></script>
+    <script id="template-header" type="text/x-vue-template">
+      <header class="" style="box-shadow:none;">
+        <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;background-color:#fff">
+          <span class="mdl-layout-title" style="color:#333">ซับ.ไทย</span>
+          <div class="mdl-layout-spacer"></div>
+          <div>
+            //อีเมล ออกจากระบบ
+          </div>
+        </div>
+      </header>
+    </script>
+    <script id="template-footer" type="text/x-vue-template">
+      <footer style="padding-top: 10px;padding-bottom: 10px;color: #777;background-color: #eee;user-select: none;">
+        <div class="container">
+          <ul class="mdl-mini-footer__link-list">
+            <li style="margin-right:15px;">
+              <a href="https://ซับ.ไทย">ซับ.ไทย</a>
+            </li>
+            <li style="margin-right:15px;">
+              <a href="https://www.tafasu.com">TAFASU</a>
+            </li>
+          </ul>
+        </div>
+      </footer>
+    </script>
+    <script id="template-banner-create" type="text/x-vue-template">
+      <div style="padding: 40px 0px 40px 0px;" class="mdl-color--primary mdl-shadow--2dp">
+        <div class="container">
+          <div>
+            <h2 class="short-header">ย่อลิ้งค์ให้ใช้ง่าย</h2>
+          </div>
+          <div>
+            <input type="text" class="long-text-input" placeholder="กรอก URL เต็มที่นี่" style="margin-top:10px;" v-model="fullURL" :disabled="shortening"></input>
+            <button :disabled="shortening" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: white;margin-top:10px;" v-on:click="addShortLink(fullURL)">
+                ย่อลิ้งค์
+            </button>
+          </div>
+          <div class="tagline">
+            ขณะนี้ใช้ได้เพียง Google Drive, Koofr, Mega และ TAFASU เท่านั้น
+          </div>
+        </div>
+      </div>
+    </script>
+    <script id="template-table-path">
+      <div class="container" style="padding-top: 40px;padding-bottom: 40px;">
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
+          <thead style="background-color: #f5f5f5;">
+            <tr>
+              <th class="mdl-data-table__cell--non-numeric">ลิ้งค์เดิม</th>
+              <th class="mdl-data-table__cell--non-numeric">สร้างเมื่อ</th>
+              <th class="mdl-data-table__cell--non-numeric">ลิ้งค์สั้น</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="3" class="mdl-data-table__cell--non-numeric">
+                <center>
+                  <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+                </center>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" class="mdl-data-table__cell--non-numeric">
+                <center>
+                  ไม่มีรายการลิ้งค์ที่จะแสดง
+                </center>
+              </td>
+            </tr>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                <!-- {{ path.full }} -->
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <!-- {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}} -->
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <!-- ซับ.ไทย/{{path.short}}
+                <button v-bind:id="'tooltip-copy-'+index" class="copy-button mdl-button mdl-js-button mdl-button--icon"><i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i></button>
+                <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+index" >
+                  คัดลอกลิ้งค์ย่อ
+                </div>
+              -->
+              </td>
+            </tr>
+          </tbody>
+          <tfoot style="background-color: #f5f5f5;">
+            <tr>
+              <td colspan="3" style="padding-top:15px;padding-bottom:15px;">
+                <div style="display: inline-block;">1-10 จาก 39</div>
+                <div style="display: inline-block;">
+                  <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">chevron_left</i></button>
+                  <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">chevron_right</i></button>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </script>
+    <script id="template-page-manage" type="text/x-vue-template">
+      <div class="mdl-layout mdl-js-layout">
+        <page-header></page-header>
+        <main class="mdl-layout__content" style="flex: 1 0 auto;">
+          <banner-create></banner-create>
+          <table-path></table-path>
+        </main>
+        <page-footer></page-footer>
+      </div>
+    </script>
+    <script id="template-page-loading" type="text/x-vue-template">
+      <div style="overflow: hidden;position: absolute;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
+        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" style="width:100px;height:100px;"></div>
+      </div>
+    </script>
     <script>
-      var app = new Vue({
+      Vue.component('page-header', {
+        template: '#template-header',
+        data: function(){
+          return {
+            user:{
+              username: "",
+              email:"",
+              type:"",
+              shorten_quota:0
+            }
+          }
+        },
+        methods: {
+        }
+      });
+      Vue.component('page-footer', {
+        template: '#template-footer',
+      });
+      Vue.component('banner-create', {
+        template: '#template-banner-create',
+      });
+      Vue.component('table-path', {
+        template: '#template-table-path',
+      });
+      Vue.component('page-manage', {
+        template: '#template-page-manage',
+      });
+      Vue.component('page-loading', {
+        template: '#template-page-loading',
+      });
+      window.user_manage = new Vue({
         el: '#user_manage',
         data: {
           page: "loading",
@@ -199,6 +248,7 @@
           shortening: false,
         }
       });
+      window.VueNotify = new Vue();
     </script>
   </body>
 </html>
