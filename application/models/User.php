@@ -93,7 +93,7 @@ class User extends CI_Model {
     }
     return $this->userid;
   }
-  public function get($uid)
+  public function get($uid = 0)
   {
     if(empty($uid)){
       $uid = $this->getId();
@@ -107,6 +107,7 @@ class User extends CI_Model {
       return null;
     }else{
         $users[0]['id'] = intval($users[0]['id']);
+        $users[0]['shorten_quota'] = intval($users[0]['shorten_quota']);
         return $users[0];
     }
   }

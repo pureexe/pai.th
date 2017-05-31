@@ -35,12 +35,13 @@ class Path extends CI_Model {
       }
     }else{
       if($this->isExist($customShortestPath)){
-        throw new Exception("Path: "+$customShortestPath+" is already exist.", 1);
+        throw new Exception("Path: ".$customShortestPath." is already exist.", 1);
       }else{
         $shortPath = $customShortestPath;
       }
     }
     $this->point($fullPath,$shortPath,$uid);
+    return $shortPath;
   }
   public function isExist($short)
   {
@@ -56,6 +57,6 @@ class Path extends CI_Model {
       'owner' => empty($uid)?0:$uid,
       'full' => $fullUrl,
       'short' => $shortUrl
-    ))
+    ));
   }
 }

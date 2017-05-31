@@ -20,17 +20,19 @@ class PathCtrl extends CI_Controller {
       $this->Rest->error('Login is required for this action');
     }
     if($this->user['type'] == 'ban' || $this->user['type'] == 'disable'){
-      $this->Rest->error('access denied');
+      $this->Rest->error('your account is suppend.');
     }
   }
   public function add()
   {
     $fullUrl = $this->input->post("full");
+    $shortUrl = $this->input->post("short");
     //admin can create own custom short url
-    if($this->User['type'] == 'admin'){
-      $shortUrl = $this->input->post("short");
+    if((!empty($shortUrl)) && $this->user['type'] != 'admin'){
+      return $this->Rest->error('only admin can create custom shortlink');
     }
     $shortUrl = $this->input->post("short");
+    $this->load->library('form_validation');
     $this->form_validation->set_rules('full', 'FullUrl', 'valid_url|callback_fullurl_check');
     if($this->form_validation->run() == FALSE){
       return $this->Rest->error(validation_errors(),1);
@@ -50,7 +52,19 @@ class PathCtrl extends CI_Controller {
     }
     $timeToMidNight = strtotime('tomorrow') - time();
     try{
-      $this->Path->shorten($uid,$fullUrl,$shortURL);
+      $path = $this->Path->shorten(
+        $this->user['id'],
+        $fullUrl,
+        $shortUrl
+      );
+      $quota_use = $this->cache->get(
+        $this->user['username'],
+        $quota_use+1,
+        strtotime('tomorrow')-time()
+      );
+      return $this->Rest->render(array(
+        'path' => $path
+      ));
     }catch(Exception $e){
       $this->Rest->error($e->getMessage());
     }
@@ -67,7 +81,7 @@ class PathCtrl extends CI_Controller {
       'app.koofr.net',
       'k00.fr'
     );
-    if(!in_array(parse_url($str, PHP_URL_HOST))){
+    if(!in_array(parse_url($fullURL, PHP_URL_HOST),$hostname)){
       //Admin can break the rule
       if($this->User['type'] == 'admin'){
         return true;

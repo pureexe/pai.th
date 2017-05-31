@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 if (!function_exists('use_cache_header'))
 {
-  function use_cache_header($time)
+  function use_cache_header($time = 0)
   {
     if(ENVIRONMENT !== 'production'){
       return;
