@@ -24,6 +24,28 @@ class Path extends CI_Model {
     $data = $query->get()->result_array();
     return empty($data)?null:$data[0]['full'];
   }
+  /**
+  * use for get user list;
+  * @method list
+  **/
+  public function list($uid,$page = 1,$limit = 10)
+  {
+    $page = ($page-1)*$limit;
+    $query = $this->db
+      ->select('id,full,short,updated_time')
+      ->from('path');
+    if(!empty($uid)){
+      $query->where('owner',$uid);
+    }
+    $query
+      ->order_by('id','DESC')
+      ->limit($limit, $page);
+    $output = $query->get()->result_array();
+    foreach ($output as &$o) {
+      $o['id'] = intval($o['id']);
+    }
+    return $output;
+  }
   public function shorten($uid,$fullPath,$customShortestPath)
   {
     $this->load->helper("thaistring");

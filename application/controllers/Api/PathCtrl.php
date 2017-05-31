@@ -79,4 +79,20 @@ class PathCtrl extends CI_Controller {
       return true;
     }
   }
+  public function list()
+  {
+    $page = $this->input->get('page');
+    $limit = $this->input->get('limit');
+    $page = empty($page)?1:$page;
+    $limit = empty($limit)?10:$limit;
+    $limit = $limit > 100?10:$limit;
+    $forceUid = $this->input->get('uid');
+    print_r($forceUid=='0');
+    if($this->user['type'] != 'admin'){
+      $uid = $this->user['id'];
+    }else{
+      $uid = $forceUid=='0'?0:$this->user['id'];
+    }
+    $this->Rest->render($this->Path->list($uid,$page,$limit));
+  }
 }
