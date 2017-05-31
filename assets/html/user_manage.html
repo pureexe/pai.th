@@ -158,9 +158,12 @@
                 </tbody>
                 <tfoot style="background-color: #f5f5f5;">
                   <tr>
-                    <td colspan="3">
-                      <div v-show="!isShowAll"><a href="#" v-on:click="loadAllPathData">แสดงข้อมูลทั้งหมด</a> (คำเตือน: ใช้ปริมาณข้อมูลมาก)</div>
-                      <div v-show="isShowAll">แสดงข้อมูลทั้งหมดแล้ว</div>
+                    <td colspan="3" style="padding-top:15px;padding-bottom:15px;">
+                      <div style="display: inline-block;">1-10 จาก 39</div>
+                      <div style="display: inline-block;">
+                        <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">chevron_left</i></button>
+                        <button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">chevron_right</i></button>
+                      </div>
                     </td>
                   </tr>
                 </tfoot>
@@ -168,8 +171,17 @@
             </div>
           </div>
         </main>
-        <footer>
-          This is a footer
+        <footer style="padding-top: 10px;padding-bottom: 10px;color: #777;background-color: #eee;user-select: none;">
+          <div class="container">
+            <ul class="mdl-mini-footer__link-list">
+              <li style="margin-right:15px;">
+                <a href="https://ซับ.ไทย">ซับ.ไทย</a>
+              </li>
+              <li style="margin-right:15px;">
+                <a href="https://www.tafasu.com">TAFASU</a>
+              </li>
+            </ul>
+          </div>
         </footer>
       </div>
     </div>
