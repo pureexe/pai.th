@@ -89,9 +89,11 @@ class User extends CI_Model {
     session_write_close();
     return $this->session->userid;
   }
-  public function get()
+  public function get($uid)
   {
-    $uid = $this->getId();
+    if(empty($uid)){
+      $uid = $this->getId();
+    }
     $query = $query = $this->db
       ->select('id,username,email,type,shorten_quota')
       ->from('user')
