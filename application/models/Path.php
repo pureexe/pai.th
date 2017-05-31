@@ -24,8 +24,18 @@ class Path extends CI_Model {
     $data = $query->get()->result_array();
     return empty($data)?null:$data[0]['full'];
   }
-  public function shorten($fullPath)
+  public function shorten($fullPath,$customShortestPath)
   {
-
+    $this->load->helper("thaistring");
+    if(empty($customShortestPath)){
+      $shortPath = random_thai_string('carnum',5);
+      while()
+    }else{
+      if($this->isExist($customShortestPath)){
+        throw new Exception("Path: "+$customShortestPath+" is already exist.", 1);
+      }else{
+        $this->point($fullUrl,$customShortestPath);
+      }
+    }
   }
 }

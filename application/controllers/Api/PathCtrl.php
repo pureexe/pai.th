@@ -32,6 +32,10 @@ class PathCtrl extends CI_Controller {
     }
     $shortUrl = $this->input->post("short");
     $this->form_validation->set_rules('full', 'FullUrl', 'valid_url|callback_fullurl_check');
+    if($this->form_validation->run() == FALSE){
+      return $this->Rest->error(validation_errors(),1);
+    }
+    //ตรวจถ้าไม่เป็นแอดมินแล้วโควต้าน้อยกว่าที่กำหนดด้วยนะ
     try{
       $this->Path->shorten($fullUrl,$shortURL);
     }catch(Exception $e){
