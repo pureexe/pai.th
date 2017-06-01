@@ -11,11 +11,13 @@ class UserCtrl extends CI_Controller {
   * redirect traveller to promise land
   * @method index
   **/
+  private $user;
   public function __construct()
 	{
     parent::__construct();
     $this->load->model("User")->model("Rest");
     $this->load->library('form_validation');
+    $this->user = $this->User->get();
 	}
   public function index()
   {
@@ -28,6 +30,9 @@ class UserCtrl extends CI_Controller {
   }
   public function create()
   {
+    if(empty($this->user) || $this->user['type'] != 'admin'){
+      return $this->Rest->error('only admin can create user');
+    }
     $this->form_validation
       ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]')
       ->set_rules('email', 'email', 'required|trim|valid_email|is_unique[user.email]');
@@ -47,6 +52,19 @@ class UserCtrl extends CI_Controller {
     $this->Rest->render(array(
       "id" => $id,
       "invite_token" => $token
+    ));
+  }
+  public function remove($uid)
+  {
+    if(empty($this->user) || $this->user['type'] != 'admin'){
+      return $this->Rest->error('only admin can remove user');
+    }
+    if(!$this->User->isExist($uid)){
+      return $this->Rest->error('can\'t remove non-exist user');
+    }
+    $this->User->remove($uid);
+    $this->Rest->render(array(
+        "id" => intval($uid)
     ));
   }
 }

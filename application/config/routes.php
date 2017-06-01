@@ -62,8 +62,11 @@ $route[urlencode('สมัคร')]['post'] = 'InviteCtrl/register_post';
 //API for private use only!
 $route['api/v1/user']['get'] = 'Api/UserCtrl';
 $route['api/v1/user/list']['get'] = 'Api/UserCtrl/list'; //admin only!
-$route['api/v1/user']['put'] = 'Api/UserCtrl/update'; //admin only!
 $route['api/v1/user']['post'] = 'Api/UserCtrl/create'; //admin only!
+$route['api/v1/user/(:num)']['get'] = 'Api/UserCtrl/get/$1'; //admin only!
+$route['api/v1/user/(:num)']['put'] = 'Api/UserCtrl/update/$1'; //updte quota or permission
+$route['api/v1/user/(:num)']['delete'] = 'Api/UserCtrl/remove/$1'; //remove user
+$route['api/v1/user/(:num)/invite']['post'] = 'Api/UserCtrl/invite/$1'; //re issue invite
 $route['api/v1/auth']['post'] = 'Api/AuthCtrl/signin';
 $route['api/v1/auth']['delete'] = 'Api/AuthCtrl/logout';
 $route['api/v1/path']['get'] = 'Api/PathCtrl/list';

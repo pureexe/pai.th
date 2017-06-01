@@ -34,7 +34,7 @@ class User extends CI_Model {
   public function create($username,$email,$password)
   {
     $this->load->library('phpass');
-    $his->load->config('subth');
+    $this->load->config('subth');
     $hash = $this->phpass->hash($password);
     $this->db->insert('user',array(
       'username' => $username,
@@ -110,5 +110,18 @@ class User extends CI_Model {
         $users[0]['shorten_quota'] = intval($users[0]['shorten_quota']);
         return $users[0];
     }
+  }
+  public function isExist($uid)
+  {
+    $cnt = $this->db
+        ->where('id',$uid)
+        ->count_all_results('user');
+    return $cnt > 0;
+  }
+  public function remove($uid)
+  {
+    $this->db
+      ->where('id', $uid)
+      ->delete('user');
   }
 }
