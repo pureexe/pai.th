@@ -241,6 +241,7 @@
     </script>
     <script>
       window.VueNotify = new Vue();
+      Vue.http.options.emulateJSON = true;
       Vue.http.options.root = '/api/v1/';
       Vue.http.headers.common['Cache-Control'] = 'no-cache';
       Vue.component('page-header', {
@@ -295,6 +296,7 @@
             }, function(error) {
               self.error_message = error.body.error.message;
               self.submitable = true;
+              console.log(error);
             });
           }
         }

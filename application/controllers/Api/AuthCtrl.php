@@ -12,10 +12,11 @@ class AuthCtrl extends CI_Controller {
   public function signin()
   {
     $this->load->database()->model('Rest');
+    $this->lang->load('subth', 'thai');
     $username = $this->input->post('username');
     $password = $this->input->post('password');
     if(empty($username) || empty($password)){
-      return $this->Rest->error('username and password is required for signin.');
+      return $this->Rest->error($this->lang->line('username_and_password_required'));
     }
     $query = $this->db
       ->select('id,password,type')
@@ -24,7 +25,7 @@ class AuthCtrl extends CI_Controller {
       ->or_where('email',$username);
     $users = $query->get()->result_array();
     if(empty($users)){
-      return $this->Rest->error('username and password is incorect');
+      return $this->Rest->error($this->lang->line('username_or_password_incorrent'));
     }
     if($users[0]['type'] == 'ban' || $users[0]['type'] == 'disable'){
       return $this->Rest->error('this user was disable');
@@ -40,7 +41,7 @@ class AuthCtrl extends CI_Controller {
         'id' => intval($users[0]['id'])
       ));
     }else{
-      return $this->Rest->error('username and password is incorect');
+      return $this->Rest->error($this->lang->line('username_or_password_incorrent'));
     }
   }
   public function logout()
