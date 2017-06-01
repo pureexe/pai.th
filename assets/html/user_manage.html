@@ -248,10 +248,45 @@
       </div>
     </script>
     <script>
+      //Intial Vue Environment
       window.VueNotify = new Vue();
       Vue.http.options.emulateJSON = true;
       Vue.http.options.root = '/api/v1/';
       Vue.http.headers.common['Cache-Control'] = 'no-cache';
+      //Util copyToClipBoard
+      window.copyTextToClipboard = function(text,parent) {
+        var textArea = window.document.createElement("textarea");
+        textArea.style.position = 'fixed';
+        textArea.style.top = 0;
+        textArea.style.left = 0;
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+        textArea.style.padding = 0;
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+        textArea.value = text;
+        if(parent){
+          window.document.querySelector('#shorten-dialog').appendChild(textArea);
+        }else{
+          window.document.body.appendChild(textArea);
+        }
+        textArea.select();
+        var successful = false;
+        try {
+          successful = document.execCommand('copy');
+        } catch (err) {
+          successful = false;
+        }
+        if(parent){
+          window.document.querySelector('#shorten-dialog').removeChild(textArea);
+        }else{
+          window.document.body.removeChild(textArea);
+        }
+        return successful;
+      }
+
       Vue.component('page-header', {
         template: '#template-header',
         data: function(){
@@ -337,11 +372,22 @@
                 self.pathList[i].date = new Date(self.pathList[i].updated_time);
               }
               self.isLoading = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              })
             },function(error){
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
               console.log(error.body);
               self.isLoading = false;
             });
+          },
+          copyToClipBoard: function(shortLink){
+            var copied = window.copyTextToClipboard("https://ซับ.ไทย/"+shortLink);
+            if(copied){
+              window.VueNotify.$emit('snackbar','คัดลอกลิ้งค์ ซับ.ไทย/'+shortLink);
+            }else{
+              window.VueNotify.$emit('snackbar','เบราว์เซอร์นี้ไม่สามารถคัดลอกได้');
+            }
           },
           next: function(){
             this.fetch(++this.page);
