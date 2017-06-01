@@ -20,7 +20,11 @@ class UserCtrl extends CI_Controller {
   public function index()
   {
     $user = $this->User->get();
-    $this->Rest->render($user);
+    if(!empty($user)){
+      $this->Rest->render($user);
+    }else{
+      $this->Rest->error("signin required");
+    }
   }
   public function create()
   {

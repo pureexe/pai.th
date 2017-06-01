@@ -33,76 +33,295 @@
   </head>
   <body>
     <div id="admin_manage">
-      <header class="mdl-color--primary mdl-shadow--2dp" >
-        <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;">
-          <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
-          <div class="mdl-layout-spacer"></div>
-          <div v-show="user.username != ''">
-            <span style="margin-right: 15px;color:#fff">เพิ่มลิ้งค์</span>
-            <span style="margin-right: 15px;color:#fff">pureexe</span>
-            <a href='#' v-on:click.prevent="logout" style="color:#fff">ออกจากระบบ</a>
-          </div>
-        </div>
-      </header>
-      <main>
-        <div class="container" style="padding-top: 40px;padding-bottom: 40px;">
-          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
-            <thead style="background-color: #f5f5f5;">
-              <tr>
-                <th>ไอดี</th>
-                <th class="mdl-data-table__cell--non-numeric">ชื่อผู้ใช้</th>
-                <th class="mdl-data-table__cell--non-numeric">อีเมล</th>
-                <th class="mdl-data-table__cell--non-numeric">สถานะ</th>
-                <th class="mdl-data-table__cell--non-numeric">บัตรเชิญ</th>
-                <th>โควต้า</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td class="mdl-data-table__cell--non-numeric">pureexe</td>
-                <td class="mdl-data-table__cell--non-numeric">pure.gif@gmail.com</td>
-                <td class="mdl-data-table__cell--non-numeric">
-                  <button id="demo-menu-lower-left" class="mdl-button mdl-js-button ">
-                      ผู้ดูแลระบบ
-                  </button>
-                  <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-left">
-                  <li class="mdl-menu__item">ผู้ใช้</li>
-                  <li class="mdl-menu__item">แบน</li>
-                  <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">ระงับ</li>
-                  <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">ผู้ดูแลระบบ</li>
-                  <li class="mdl-menu__item">ลบ</li>
-                </ul>
-                </td>
-                <td class="mdl-data-table__cell--non-numeric">
-                  <button class="mdl-button mdl-js-button ">
-                    สร้าง
-                  </button>
-                </td>
-                <td>
-                  <button class="mdl-button mdl-js-button ">
-                    33
-                  </button>
-                </td>
-            </tbody>
-            <tfoot style="background-color: #f5f5f5;">
-              <tr>
-                <td colspan="6">แสดงข้อมูลทั้งหมดแล้ว</td>
-              </tr>
-            </tfoot>
-          </table>
-          <div style="position:absolute;bottom:24px;right:24px;">
-            <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-              <i class="material-icons">add</i>
-            </button>
-          </div>
-      </main>
+      <page-loading v-show="page == 'loading'"></page-loading>
+      <div class="mdl-layout mdl-js-layout">
+        <page-header></page-header>
+        <page-signin v-show="page == 'signin'"></page-signin>
+        <page-users v-show="page == 'users'"></page-users>
+      </div>
+      <snackbar></snackbar>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vue-resource"></script>
+    <script id="template-header" type="text/x-vue-template">
+    <header class="mdl-color--primary mdl-shadow--2dp" >
+      <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;">
+        <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
+        <div class="mdl-layout-spacer"></div>
+        <div v-show="user.username != ''">
+          <span style="margin-right: 15px;color:#fff">เพิ่มลิ้งค์</span>
+          <span style="margin-right: 15px;color:#fff">pureexe</span>
+          <a href='#' v-on:click.prevent="logout" style="color:#fff">ออกจากระบบ</a>
+        </div>
+      </div>
+    </header>
+    </script>
+    <script id="template-page-loading" type="text/x-vue-template">
+      <div style="overflow: hidden;position: absolute;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
+        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" style="width:100px;height:100px;"></div>
+      </div>
+    </script>
+    <script id="template-page-signin" type="text/x-vue-template">
+      <main class="mdl-layout__content" style="flex: 1 0 auto;">
+        <div style="overflow: hidden;position: absolute;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;flex-direction: column;">
+          <h1 style="font-family: 'Athiti', sans-serif;margin-top: 0px;">ผู้ดูแลระบบ</h1>
+          <div class="card mdl-card mdl-shadow--2dp" style="padding:20px;width: auto;max-width: 320px;min-height: 0;">
+            <form action="" method="post" v-on:submit.prevent="onSubmit">
+              <div class="mdl-textfield mdl-js-textfield" style="display:block">
+                <input class="mdl-textfield__input" type="text" id="username" name="text" v-model="username">
+                <label class="mdl-textfield__label" for="username">ชื่อผู้ใช้หรืออีเมล</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield" style="display:block">
+                <input class="mdl-textfield__input" type="password" id="password" name="password" v-model="password" >
+                <label class="mdl-textfield__label" for="password">รหัสผ่าน</label>
+              </div>
+              <center>
+                <p class="red">{{error_message}}</p>
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                  เข้าสู่ระบบ
+                </button>
+              </center>
+            </form>
+          </div>
+        </div>
+      </main>
+    </script>
+    <script id="template-page-users" type="text/x-vue-template">
+    <main>
+      <div class="container" style="padding-top: 40px;padding-bottom: 40px;">
+        <table-users></table-users>
+        <div style="position:absolute;bottom:24px;right:24px;">
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+            <i class="material-icons">add</i>
+          </button>
+        </div>
+      </div>
+    </main>
+    </script>
+    <script id="template-table-users" type="text/x-vue-template">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
+      <thead style="background-color: #f5f5f5;">
+        <tr>
+          <th>ไอดี</th>
+          <th class="mdl-data-table__cell--non-numeric">ชื่อผู้ใช้</th>
+          <th class="mdl-data-table__cell--non-numeric">อีเมล</th>
+          <th class="mdl-data-table__cell--non-numeric">สถานะ</th>
+          <th class="mdl-data-table__cell--non-numeric">บัตรเชิญ</th>
+          <th>โควต้า</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      <tfoot style="background-color: #f5f5f5;">
+        <tr>
+          <td colspan="6">แสดงข้อมูลทั้งหมดแล้ว</td>
+        </tr>
+      </tfoot>
+    </table>
+    </script>
+    <script id="template-row-user" type="text/x-vue-template">
+    <tr>
+      <td>1</td>
+      <td class="mdl-data-table__cell--non-numeric">pureexe</td>
+      <td class="mdl-data-table__cell--non-numeric">pure.gif@gmail.com</td>
+      <td class="mdl-data-table__cell--non-numeric">
+        <button id="demo-menu-lower-left" class="mdl-button mdl-js-button ">
+            ผู้ดูแลระบบ
+        </button>
+        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-left">
+        <li class="mdl-menu__item">ผู้ใช้</li>
+        <li class="mdl-menu__item">แบน</li>
+        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">ระงับ</li>
+        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">ผู้ดูแลระบบ</li>
+        <li class="mdl-menu__item">ลบ</li>
+      </ul>
+      </td>
+      <td class="mdl-data-table__cell--non-numeric">
+        <button class="mdl-button mdl-js-button ">
+          สร้าง
+        </button>
+      </td>
+      <td>
+        <button class="mdl-button mdl-js-button ">
+          33
+        </button>
+      </td>
+    </tr>
+    </script>
+    <script id="template-snackbar" type="text/x-vue-template">
+      <div id="snackbarContainer" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+      </div>
+    </script>
     <script>
-
+    //Intial Vue Environment
+    window.VueNotify = new Vue();
+    Vue.http.options.emulateJSON = true;
+    Vue.http.options.root = '/api/v1/';
+    Vue.http.headers.common['Cache-Control'] = 'no-cache';
+    //Util copyToClipBoard
+    window.copyTextToClipboard = function(text,parent) {
+      var textArea = window.document.createElement("textarea");
+      textArea.style.position = 'fixed';
+      textArea.style.top = 0;
+      textArea.style.left = 0;
+      textArea.style.width = '2em';
+      textArea.style.height = '2em';
+      textArea.style.padding = 0;
+      textArea.style.border = 'none';
+      textArea.style.outline = 'none';
+      textArea.style.boxShadow = 'none';
+      textArea.style.background = 'transparent';
+      textArea.value = text;
+      if(parent){
+        window.document.querySelector('#shorten-dialog').appendChild(textArea);
+      }else{
+        window.document.body.appendChild(textArea);
+      }
+      textArea.select();
+      var successful = false;
+      try {
+        successful = document.execCommand('copy');
+      } catch (err) {
+        successful = false;
+      }
+      if(parent){
+        window.document.querySelector('#shorten-dialog').removeChild(textArea);
+      }else{
+        window.document.body.removeChild(textArea);
+      }
+      return successful;
+    }
+    Vue.component('page-header', {
+      template: '#template-header',
+      data: function(){
+        return {
+          user:{
+            username: "",
+            email:"",
+            type:"",
+            shorten_quota:0
+          }
+        }
+      },
+      mounted:function(){
+        var self = this;
+        window.VueNotify.$on('onAuthenticate',function(user){
+          if(user){
+            self.user = user;
+          }else{
+            self.user = {
+              username: "",
+              email:"",
+              type:"",
+              shorten_quota:0
+            }
+          }
+        });
+      },
+      methods: {
+        logout: function(){
+          this.$http.delete('auth').then(function(){
+            window.VueNotify.$emit('onAuthenticate',null);
+          },function(){
+            window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+          });
+        }
+      }
+    });
+    Vue.component('page-loading', {
+      template: '#template-page-loading',
+    });
+    Vue.component('snackbar', {
+      template: '#template-snackbar',
+      mounted: function(){
+        window.VueNotify.$on('snackbar',function(str){
+          document.querySelector('#snackbarContainer')
+            .MaterialSnackbar.showSnackbar({message:str});
+        });
+      }
+    });
+    Vue.component('table-users', {
+      template: '#template-table-users',
+      data: function(){
+        return {}
+      },
+    });
+    Vue.component('row-user', {
+      template: '#template-row-user',
+      data: function(){
+        return {}
+      },
+    });
+    Vue.component('page-users', {
+      template: '#template-page-users',
+      data: function(){
+        return {}
+      },
+    });
+    Vue.component('page-signin', {
+      template: '#template-page-signin',
+      data: function(){
+        return {
+          submitable: true,
+          username: "",
+          password: "",
+          error_message: "",
+        }
+      },
+      methods: {
+        onSubmit: function(){
+          var self = this;
+          submitable = false;
+          this.$http.post('auth',{
+            username:self.username,
+            password:self.password
+          }).then(function(response) {
+            window.VueNotify.$emit('getUser',null);
+          }, function(error) {
+            if(error.body.error.message){
+              self.error_message = error.body.error.message
+            }else{
+                self.error_message = "พบข้อผิดพลาด "+error.bodyText;
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+                console.error(error.body);
+            }
+            self.submitable = true;
+          });
+        }
+      }
+    });
+    window.admin_manage = new Vue({
+      el: '#admin_manage',
+      data: {
+        page: "loading",
+      },
+      mounted: function(){
+        var self = this;
+        window.VueNotify.$on('getUser',function(){
+          self.$http.get('user').then(function(response){
+            if(response.body.type == 'admin'){
+              window.VueNotify.$emit('onAuthenticate',response.body);
+            }else{
+              window.VueNotify.$emit('onAuthenticate',null);
+              window.VueNotify.$emit('snackbar','เฉพาะผู้ดูแลระบบเท่านั้น')
+            }
+          },function(error){
+            window.VueNotify.$emit('onAuthenticate',null);
+          });
+        });
+        window.VueNotify.$on('onAuthenticate',function(user){
+          if(user){
+            self.page = "users";
+          }else{
+            self.page = "signin";
+          }
+        });
+        window.VueNotify.$emit('getUser',null);
+      }
+    });
     </script>
   </body>
 </html>
