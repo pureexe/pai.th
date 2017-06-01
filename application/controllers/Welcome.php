@@ -40,7 +40,10 @@ class Welcome extends CI_Controller {
 	}
 	public function read()
 	{
-		$a = parse_url("http://www.google.com", PHP_URL_HOST);
-		print_r($a);
+		$fullURL = "k00.fr/abcd";
+		if(strpos($fullURL, '://') === false){
+      $fullURL = "http://".$fullURL;
+    }
+		echo $fullURL;
 	}
 }

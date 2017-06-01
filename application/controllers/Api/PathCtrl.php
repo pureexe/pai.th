@@ -39,6 +39,11 @@ class PathCtrl extends CI_Controller {
     if($this->form_validation->run() == FALSE){
       return $this->Rest->error(validation_errors(),1);
     }
+    $oldshort = $this->Path->getShortByFull($fullUrl,$this->user['id']);
+    if(!empty($oldshort)){
+      $this->Path->updateTime($oldshort,$this->user['id']);
+      return $this->Rest->error($oldshort,20);
+    }
     $this->load->driver('cache',
         array(
           'adapter' => 'apc',
@@ -74,7 +79,7 @@ class PathCtrl extends CI_Controller {
   {
     $this->load->config('subth');
     $hostname = $this->config->item('shorten_whitelist');
-    if($this->user['type'] == 'admin' && !in_array(parse_url($fullURL, PHP_URL_HOST),$hostname)){
+    if($this->user['type'] != 'admin' && !in_array(parse_url($fullURL, PHP_URL_HOST),$hostname)){
       $this->form_validation->set_message('fullurl_check', 'Only accepeted domainlist');
       return false;
     } else {

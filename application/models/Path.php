@@ -38,6 +38,7 @@ class Path extends CI_Model {
       $query->where('owner',$uid);
     }
     $query
+      ->order_by('updated_time','DESC')
       ->order_by('id','DESC')
       ->limit($limit, $page);
     $output = $query->get()->result_array();
@@ -64,6 +65,25 @@ class Path extends CI_Model {
     }
     $this->point($fullPath,$shortPath,$uid);
     return $shortPath;
+  }
+  public function getShortByFull($full,$uid)
+  {
+    $query = $this->db
+      ->select('short')
+      ->from('path')
+      ->where('full',$full)
+      ->where('owner',$uid);
+    $result = $query->get()->result_array();
+    return empty($result)?null:$result[0]['short'];
+  }
+  public function updateTime($short,$uid)
+  {
+    $query = $this->db
+      ->where('owner',$uid)
+      ->where('short',$short)
+      ->update('path',array(
+        'updated_time' => date('Y-m-d H:i:s')
+      ));
   }
   public function isExist($short)
   {

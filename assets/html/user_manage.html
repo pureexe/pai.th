@@ -105,7 +105,7 @@
           <span class="mdl-layout-title" style="color:#333">ซับ.ไทย</span>
           <div class="mdl-layout-spacer"></div>
           <div>
-            //อีเมล ออกจากระบบ
+            <span style="margin-right: 15px;">{{user.username}}</span> <a href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
           </div>
         </div>
       </header>
@@ -338,14 +338,37 @@
             this.shortening = true;
             this.$http.post('path',{full:url}).then(
               function(response){
-                var short = response.body.path;
-                self.shortening = false;
-                //add to list (to implement)
+                window.VueNotify.$emit('newShortURL',{
+                  full: url,
+                  short: response.body.path,
+                  date: new Date(),
+                  countItem: true
+                });
+                this.shortening = false;
+                self.fullURL = "";
               },
               function(error){
-                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
-                console.log(error.body);
+                try{
+                  if(error.body.error.code != 20){
+                    throw "Not code 20";
+                  }
+                  var short = error.body.error.message;
+                  window.VueNotify.$emit('newShortURL',{
+                    full: url,
+                    short: short,
+                    date: new Date(),
+                    countItem: false
+                  });
+                }catch(e){
+                  try{
+                    window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.body.error.message);
+                  }catch(e){
+                    console.log(error.body);
+                    window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+                  }
+                }
                 self.shortening = false;
+                self.fullURL = "";
               }
             );
           }
@@ -366,6 +389,7 @@
             var self = this;
             page = page?page:1;
             self.isLoading = true;
+            self.pathList = [];
             self.$http.get('path?page='+page).then(function(response){
               self.pathList = response.body.path;
               for(var i = 0;i<self.pathList.length;i++){
@@ -411,6 +435,25 @@
               });
             }else{
               self.pathList = [];
+            }
+          });
+          window.VueNotify.$on('newShortURL',function(data){
+            if(self.page != 1){
+              self.page = 1;
+              self.page(1);
+            }else{
+              var pos = self.pathList.map(function(e) { return e.short; }).indexOf(data.short);
+              if(pos != -1){
+                self.pathList.splice(pos,1);
+              }
+              if(data.countItem){
+                self.totalItem++;
+              }
+              delete data.countItem;
+              self.pathList.unshift(data);
+              if(self.pathList.length > 10){
+                self.pathList.pop();
+              }
             }
           });
         }
