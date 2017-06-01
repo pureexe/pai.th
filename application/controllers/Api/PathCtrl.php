@@ -89,12 +89,32 @@ class PathCtrl extends CI_Controller {
     $limit = empty($limit)?10:$limit;
     $limit = $limit > 100?10:$limit;
     $forceUid = $this->input->get('uid');
-    print_r($forceUid=='0');
     if($this->user['type'] != 'admin'){
       $uid = $this->user['id'];
     }else{
+      if(empty($forceUid) && $forceUid=='0'){
+        $uid = 0;
+      }else if(!empty($forceUid)){
+        $uid = $forceUid;
+      }else{
+        $this->user['id'];
+      }
       $uid = $forceUid=='0'?0:$this->user['id'];
     }
-    $this->Rest->render($this->Path->list($uid,$page,$limit));
+    $this->Rest->render(array("path"=>$this->Path->list($uid,$page,$limit)));
+  }
+  public function count()
+  {
+    $forceUid = $this->input->get('uid');
+    if(empty($forceUid) && $forceUid=='0'){
+      $uid = 0;
+    }else if(!empty($forceUid)){
+      $uid = $forceUid;
+    }else{
+      $uid = $this->user['id'];
+    }
+    $this->Rest->render(array(
+      'count' => $this->Path->count($uid),
+    ));
   }
 }

@@ -67,6 +67,7 @@ $route['api/v1/user']['post'] = 'Api/UserCtrl/create'; //admin only!
 $route['api/v1/auth']['post'] = 'Api/AuthCtrl/signin';
 $route['api/v1/auth']['delete'] = 'Api/AuthCtrl/logout';
 $route['api/v1/path']['get'] = 'Api/PathCtrl/list';
+$route['api/v1/path/count']['get'] = 'Api/PathCtrl/count';
 $route['api/v1/path']['post'] = 'Api/PathCtrl/add';
 
 //debug

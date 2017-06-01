@@ -74,11 +74,20 @@ class Path extends CI_Model {
   }
   public function point($fullUrl,$shortUrl,$uid)
   {
-    $this->load->model('User');
     $this->db->insert('path',array(
       'owner' => empty($uid)?0:$uid,
       'full' => $fullUrl,
       'short' => $shortUrl
     ));
+  }
+  public function count($uid)
+  {
+    if(empty($uid)){
+      return $this->db->count_all_results('path');
+    }else{
+      return $this->db
+          ->where('owner',$uid)
+          ->count_all_results('path');
+    }
   }
 }

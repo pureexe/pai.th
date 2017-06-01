@@ -153,34 +153,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr v-show="isLoading">
               <td colspan="3" class="mdl-data-table__cell--non-numeric">
                 <center>
                   <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
                 </center>
               </td>
             </tr>
-            <tr>
+            <tr v-show="!isLoading && pathList.length == 0">
               <td colspan="3" class="mdl-data-table__cell--non-numeric">
                 <center>
                   ไม่มีรายการลิงก์ที่จะแสดง
                 </center>
               </td>
             </tr>
-            <tr>
+            <tr v-for="(path, index) in pathList">
               <td class="mdl-data-table__cell--non-numeric">
-                <!-- {{ path.full }} -->
+                {{ path.full }}
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <!-- {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}} -->
+                {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}}
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <!-- ซับ.ไทย/{{path.short}}
+                ซับ.ไทย/{{path.short}}
                 <button v-bind:id="'tooltip-copy-'+index" class="copy-button mdl-button mdl-js-button mdl-button--icon"><i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i></button>
                 <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+index" >
                   คัดลอกลิงก์ย่อ
                 </div>
-              -->
               </td>
             </tr>
           </tbody>
@@ -296,17 +295,66 @@
           }
         },methods: {
           addShortLink: function(url){
+            var self = this;
             url = url.trim();
             if(url.length == 0){
               return ;
             }
             this.shortening = true;
-            console.log(url);
+            this.$http.post('path',{full:url}).then(
+              function(response){
+                var short = response.body.path;
+                self.shortening = false;
+                //add to list (to implement)
+              },
+              function(error){
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+                console.log(error.body);
+                self.shortening = false;
+              }
+            );
           }
         }
       });
       Vue.component('table-path', {
         template: '#template-table-path',
+        data: function(){
+          return {
+            page: 1,
+            totalItem: 0,
+            pathList: [],
+            isLoading: true,
+          }
+        },
+        mounted: function(){
+          var self = this;
+          self.isLoading = true;
+          window.VueNotify.$on('onAuthenticate',function(user){
+            if(user){
+              self.$http.get('path').then(function(response){
+                self.pathList = response.body.path;
+                for(var i = 0;i<self.pathList.length;i++){
+                  self.pathList[i].date = new Date(self.pathList[i].updated_time);
+                }
+                self.page = 1;
+                self.isLoading = false;
+              },function(error){
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+                console.log(error.body);
+                self.isLoading = false;
+              });
+              self.$http.get('count').then(function(response){
+                self.totalItem = response.body.count;
+              },function(error){
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+                console.log(error.body);
+                self.isLoading = false;
+              });
+            }else{
+              self.pathList = [];
+            }
+          });
+        }
       });
       Vue.component('page-manage', {
         template: '#template-page-manage',
