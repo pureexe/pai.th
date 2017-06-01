@@ -27,9 +27,11 @@ class PathCtrl extends CI_Controller {
   {
     $fullUrl = $this->input->post("full");
     $shortUrl = $this->input->post("short");
-    //admin can create own custom short url
     if((!empty($shortUrl)) && $this->user['type'] != 'admin'){
       return $this->Rest->error('only admin can create custom shortlink');
+    }
+    if(strpos($fullUrl, '://') === false){
+      $fullUrl = "http://".$fullUrl;
     }
     $shortUrl = $this->input->post("short");
     $this->load->library('form_validation');

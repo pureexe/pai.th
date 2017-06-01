@@ -40,13 +40,7 @@ class Welcome extends CI_Controller {
 	}
 	public function read()
 	{
-		$tomorrowMidnight = strtotime('tomorrow');
-		$this->load->driver('cache',
-        array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'quota_use_')
-		);
-		$foo = $this->cache->get('foo');
-		$foo = empty($foo)?1:$foo+1;
-		$this->cache->save('foo', $foo, 60);
-		echo $foo;
+		$a = parse_url("http://www.google.com", PHP_URL_HOST);
+		print_r($a);
 	}
 }
