@@ -83,11 +83,15 @@
             width: 1170px;
           }
         }
+        .red{
+          color: red;
+        }
     </style>
   </head>
   <body>
     <div id="user_manage">
-      <page-loading></page-loading>
+      <page-loading v-if="false"></page-loading>
+      <page-signin></page-signin>
       <page-manage v-if="false"></page-manage>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
@@ -136,7 +140,7 @@
         </div>
       </div>
     </script>
-    <script id="template-table-path">
+    <script id="template-table-path" type="text/x-vue-template">
       <div class="container" style="padding-top: 40px;padding-bottom: 40px;">
         <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
           <thead style="background-color: #f5f5f5;">
@@ -207,7 +211,38 @@
         <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" style="width:100px;height:100px;"></div>
       </div>
     </script>
+    <script id="template-page-signin" type="text/x-vue-template">
+    <div class="mdl-layout mdl-js-layout">
+      <page-header></page-header>
+      <main class="mdl-layout__content" style="flex: 1 0 auto;">
+        <div style="overflow: hidden;position: absolute;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
+          <div class="card mdl-card mdl-shadow--2dp" style="padding:20px;width: auto;max-width: 320px;min-height: 0;">
+            <form action="" method="post" v-on:submit.prevent="onSubmit">
+              <div class="mdl-textfield mdl-js-textfield" style="display:block">
+                <input class="mdl-textfield__input" type="text" id="username" name="text" v-model="username">
+                <label class="mdl-textfield__label" for="username">ชื่อผู้ใช้หรืออีเมล</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield" style="display:block">
+                <input class="mdl-textfield__input" type="password" id="password" name="password" v-model="password" >
+                <label class="mdl-textfield__label" for="password">รหัสผ่าน</label>
+              </div>
+              <center>
+                <p class="red">{{error_message}}</p>
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                  เข้าสู่ระบบ
+                </button>
+              </center>
+            </form>
+          </div>
+        </div>
+      </main>
+      <page-footer></page-footer>
+    </div>
+    </script>
     <script>
+      window.VueNotify = new Vue();
+      Vue.http.options.root = '/api/v1/';
+      Vue.http.headers.common['Cache-Control'] = 'no-cache';
       Vue.component('page-header', {
         template: '#template-header',
         data: function(){
@@ -238,6 +273,32 @@
       Vue.component('page-loading', {
         template: '#template-page-loading',
       });
+      Vue.component('page-signin', {
+        template: '#template-page-signin',
+        data: function(){
+          return {
+            submitable: true,
+            username: "",
+            password: "",
+            error_message: "",
+          }
+        },
+        methods: {
+          onSubmit: function(){
+            var self = this;
+            submitable = false;
+            this.$http.post('auth',{
+              username:self.username,
+              password:self.password
+            }).then(function(response) {
+              console.log(response)
+            }, function(error) {
+              self.error_message = error.body.error.message;
+              self.submitable = true;
+            });
+          }
+        }
+      });
       window.user_manage = new Vue({
         el: '#user_manage',
         data: {
@@ -248,7 +309,6 @@
           shortening: false,
         }
       });
-      window.VueNotify = new Vue();
     </script>
   </body>
 </html>
