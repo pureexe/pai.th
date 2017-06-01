@@ -28,7 +28,7 @@ class AuthCtrl extends CI_Controller {
       return $this->Rest->error($this->lang->line('username_or_password_incorrent'));
     }
     if($users[0]['type'] == 'ban' || $users[0]['type'] == 'disable'){
-      return $this->Rest->error('this user was disable');
+      return $this->Rest->error($this->lang->line('user_disable'));
     }
     $this->load->library('phpass');
     if($this->phpass->check($password,$users[0]['password'])){
@@ -48,10 +48,11 @@ class AuthCtrl extends CI_Controller {
   {
     $this->load->database()->model('Rest');
     $this->load->library('session');
+    $this->lang->load('subth', 'thai');
     $this->session->unset_userdata('userid');
     session_write_close();
     return $this->Rest->render(array(
-      'message' => 'logout successfully'
+      'message' => $this->lang->line('logout_successfully')
     ));
   }
 }
