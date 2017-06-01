@@ -72,8 +72,27 @@ class UserCtrl extends CI_Controller {
     if(empty($this->user) || $this->user['type'] != 'admin'){
       return $this->Rest->error('only admin can change user data');
     }
-    $quota = $this->input->put('quota');
-    $role = $this->input->put('role');
+    $quota = $this->input->post('quota');
+    $type = $this->input->post('type');
+    $user = $this->User->get($uid);
+    if(empty($user)){
+        return $this->Rest->error('can\'t modify non-exist user');
+    }
+    if(!empty($quota) && is_numeric($quota)){
+      $this->load->driver('cache',array(
+            'adapter' => 'apc',
+            'backup' => 'file',
+            'key_prefix' => 'quota_shorten_'
+      ));
+      $this->cache->delete($user['username']);
+      $this->User->setQuota($uid,intval($quota));
+    }
+    if(!empty($type) && in_array($type,array('admin','user','ban','disable'))){
+      $this->User->setType($uid,$type);
+    }
+    $this->Rest->render(array(
+      "id" => intval($uid)
+    ));
   }
   public function invite($uid)
   {

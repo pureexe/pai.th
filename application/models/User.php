@@ -124,4 +124,20 @@ class User extends CI_Model {
       ->where('id', $uid)
       ->delete('user');
   }
+  public function setType($uid,$type)
+  {
+    $this->db
+      ->where('id',$uid)
+      ->update('user',array(
+        'type' => $type
+      ));
+  }
+  public function setQuota($uid,$cnt)
+  {
+    $this->db
+      ->where('id',$uid)
+      ->update('user',array(
+        'shorten_quota' => $cnt
+      ));
+  }
 }
