@@ -102,20 +102,20 @@
     <script id="template-header" type="text/x-vue-template">
       <header class="" style="box-shadow:none;">
         <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;background-color:#fff">
-          <span class="mdl-layout-title" style="color:#333">ซับ.ไทย</span>
+          <span class="mdl-layout-title" style="color:#333;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
           <div class="mdl-layout-spacer"></div>
-          <div>
+          <div v-show="user.username != ''">
             <span style="margin-right: 15px;">{{user.username}}</span> <a href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
           </div>
         </div>
       </header>
     </script>
     <script id="template-footer" type="text/x-vue-template">
-      <footer style="padding-top: 10px;padding-bottom: 10px;color: #777;background-color: #eee;user-select: none;">
+      <footer style="padding-top: 10px;padding-bottom: 10px;color: #777;background-color: #eee;">
         <div class="container">
           <ul class="mdl-mini-footer__link-list">
             <li style="margin-right:15px;">
-              <a href="https://ซับ.ไทย">ซับ.ไทย</a>
+              <a href="https://ซับ.ไทย" style="font-family: Athiti, sans-serif;">ซับ.ไทย</a>
             </li>
             <li style="margin-right:15px;">
               <a href="https://www.tafasu.com">TAFASU</a>
@@ -315,7 +315,13 @@
           });
         },
         methods: {
-
+          logout: function(){
+            this.$http.delete('auth').then(function(){
+              window.VueNotify.$emit('onAuthenticate',null);
+            },function(){
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            });
+          }
         }
       });
       Vue.component('page-footer', {
