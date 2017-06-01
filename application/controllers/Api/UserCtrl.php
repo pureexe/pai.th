@@ -67,4 +67,25 @@ class UserCtrl extends CI_Controller {
         "id" => intval($uid)
     ));
   }
+  public function update($uid)
+  {
+    if(empty($this->user) || $this->user['type'] != 'admin'){
+      return $this->Rest->error('only admin can change user data');
+    }
+    $quota = $this->input->put('quota');
+    $role = $this->input->put('role');
+  }
+  public function invite($uid)
+  {
+    if(empty($this->user) || $this->user['type'] != 'admin'){
+      return $this->Rest->error('only admin can issue invite token');
+    }
+    if(!$this->User->isExist($uid)){
+      return $this->Rest->error('can\'t issue invite token for non-exist user');
+    }
+    $token = $this->User->generateInviteToken($uid);
+    $this->Rest->render(array(
+      "invite_token" => $token
+    ));
+  }
 }
