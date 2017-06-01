@@ -92,8 +92,12 @@
   <body>
     <div id="user_manage">
       <page-loading v-show="page == 'loading'"></page-loading>
-      <page-signin v-show="page == 'signin'"></page-signin>
-      <page-manage v-show="page == 'manage'"></page-manage>
+      <div class="mdl-layout mdl-js-layout">
+        <page-header></page-header>
+        <page-signin v-show="page == 'signin'"></page-signin>
+        <page-manage v-show="page == 'manage'"></page-manage>
+        <page-footer></page-footer>
+      </div>
       <snackbar></snackbar>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
@@ -198,14 +202,10 @@
       </div>
     </script>
     <script id="template-page-manage" type="text/x-vue-template">
-      <div class="mdl-layout mdl-js-layout">
-        <page-header></page-header>
         <main class="mdl-layout__content" style="flex: 1 0 auto;">
           <banner-create></banner-create>
           <table-path></table-path>
         </main>
-        <page-footer></page-footer>
-      </div>
     </script>
     <script id="template-page-loading" type="text/x-vue-template">
       <div style="overflow: hidden;position: absolute;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;">
@@ -213,8 +213,6 @@
       </div>
     </script>
     <script id="template-page-signin" type="text/x-vue-template">
-    <div class="mdl-layout mdl-js-layout">
-      <page-header></page-header>
       <main class="mdl-layout__content" style="flex: 1 0 auto;">
         <div style="overflow: hidden;position: absolute;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;flex-direction: column;">
           <h1 style="font-family: 'Athiti', sans-serif;margin-top: 0px;">ซับ.ไทย</h1>
@@ -238,8 +236,6 @@
           </div>
         </div>
       </main>
-      <page-footer></page-footer>
-    </div>
     </script>
     <script id="template-snackbar" type="text/x-vue-template">
       <div id="snackbarContainer" class="mdl-js-snackbar mdl-snackbar">
