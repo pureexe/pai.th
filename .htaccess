@@ -16,11 +16,13 @@
   RewriteRule ^จัดการ$ assets/html/user_manage.html [L]
   RewriteRule ^ผู้ดูแล$ assets/html/admin_manage.html [L]
   #API protection by referer (Set more referer for whitelist);
-  # RewriteCond %{HTTP:Referer} !^((.+)localhost(.+)|(.+)127.0.0.1(.+))$
-  # RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
+  RewriteCond %{HTTP:Referer} !^((.+)localhost(.+)|(.+)127.0.0.1(.+))$
+  RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
   #Anti Neko-miku
   RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$
   RewriteRule .* https://assets.pureapp.in.th/neko508.html [R=302,L]
+  #Rewrite Homepage use static
+  RewriteRule ^$ assets/html/main.html
   #Codeigniter Path Redirecter
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

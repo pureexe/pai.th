@@ -45,8 +45,8 @@
       <snackbar></snackbar>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-    <script src="https://unpkg.com/vue"></script>
-    <script src="https://unpkg.com/vue-resource"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.3.3/vue-resource.min.js"></script>
     <script id="template-header" type="text/x-vue-template">
     <header class="mdl-color--primary mdl-shadow--2dp" >
       <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;">
@@ -241,7 +241,6 @@
       }else{
         window.document.body.removeChild(textArea);
       }
-      console.log(successful);
       return successful;
     }
     Vue.component('page-header', {
@@ -316,7 +315,7 @@
               try{
                 window.VueNotify.$emit('snackbar',error.body.error.message);
               }catch(e){
-                console.log(error.body);
+                console.error(error.body);
                 window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
               }
               isLoading = false;
@@ -371,7 +370,7 @@
             try{
               window.VueNotify.$emit('snackbar',error.body.error.message);
             }catch(e){
-              console.log(error.body);
+              console.error(error.body);
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
             window.VueNotify.$emit('removeByTempId',self.user.tempId);
@@ -405,7 +404,7 @@
             try{
               window.VueNotify.$emit('snackbar',error.body.error.message);
             }catch(e){
-              console.log(error.body);
+              console.error(error.body);
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
           });
@@ -454,7 +453,7 @@
             try{
               window.VueNotify.$emit('snackbar',error.body.error.message);
             }catch(e){
-              console.log(error.body);
+              console.error(error.body);
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
           });
@@ -479,7 +478,6 @@
         },
         doAddUser: function()
         {
-          console.log("doAddUser");
           if(this.username == "" || this.email == ""){
             return this.dialog_error_message = "กรุณาใส่ชื่อผู้ใช้และอีเมล";
           }
