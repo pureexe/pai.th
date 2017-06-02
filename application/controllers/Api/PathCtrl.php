@@ -80,7 +80,7 @@ class PathCtrl extends CI_Controller {
       return true;
     }
   }
-  public function list()
+  public function all()
   {
     $page = $this->input->get('page');
     $limit = $this->input->get('limit');
@@ -100,7 +100,7 @@ class PathCtrl extends CI_Controller {
       }
       $uid = $forceUid=='0'?0:$this->user['id'];
     }
-    $this->Rest->render(array("path"=>$this->Path->list($uid,$page,$limit)));
+    $this->Rest->render(array("path"=>$this->Path->all($uid,$page,$limit)));
   }
   public function count()
   {

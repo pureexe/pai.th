@@ -16,7 +16,7 @@
   RewriteRule ^จัดการ$ assets/html/user_manage.html [L]
   RewriteRule ^ผู้ดูแล$ assets/html/admin_manage.html [L]
   #API protection by referer (Set more referer for whitelist);
-  RewriteCond %{HTTP:Referer} !^((.+)localhost(.+)|(.+)127.0.0.1(.+))$
+  RewriteCond %{HTTP:Referer} !^((.+)localhost(.+)|(.+)127.0.0.1(.+)|(.+)ซับ.ไทย(.+)|)$
   RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
   #Anti Neko-miku
   RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$

@@ -28,7 +28,7 @@ class Path extends CI_Model {
   * use for get user list;
   * @method list
   **/
-  public function list($uid,$page = 1,$limit = 10)
+  public function all($uid,$page = 1,$limit = 10)
   {
     $page = ($page-1)*$limit;
     $query = $this->db

@@ -140,7 +140,7 @@ class User extends CI_Model {
         'shorten_quota' => $cnt
       ));
   }
-  public function list($page,$limit)
+  public function all($page,$limit)
   {
     $page = ($page-1)*$limit;
     $query = $this->db

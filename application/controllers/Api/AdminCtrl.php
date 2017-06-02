@@ -80,13 +80,13 @@ class AdminCtrl extends CI_Controller {
       "invite_token" => $token
     ));
   }
-  public function list()
+  public function all()
   {
     $limit = $this->input->get('limit');
     $page = $this->input->get('page');
     $page = empty($page)?1:$page;
     $limit = empty($limit)?10:$limit;
     $limit = $limit > 1000?10:$limit;
-    $this->Rest->render(array("user"=>$this->User->list($page,$limit)));
+    $this->Rest->render(array("user"=>$this->User->all($page,$limit)));
   }
 }
