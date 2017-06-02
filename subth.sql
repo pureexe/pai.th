@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 02, 2017 at 10:23 AM
+-- Generation Time: Jun 02, 2017 at 03:06 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -58,7 +58,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `email`, `password`, `invite_token`, `type`, `status`, `shorten_quota`) VALUES
-(1, 'pureexe', 'pure.gif@gmail.com', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', '', 33);
+(1, 'pureexe', 'pure.gif@gmail.com', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'user', '', 33),
+(2, 'alice', 'alice@tafasu.com', '$2a$08$JKBTcpjq0itu4DpeUpp15utwrNwEfFV1xtNRmicIgD6kBkvZC5xW.', 'ญภสนนผฬม', 'admin', '', 33);
 
 --
 -- Indexes for dumped tables
@@ -89,7 +90,7 @@ ALTER TABLE `path`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
