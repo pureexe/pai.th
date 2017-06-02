@@ -8,10 +8,23 @@ if (!function_exists('use_cache_header'))
     if(ENVIRONMENT !== 'production'){
       return;
     }
+    $CI = & get_instance();
     if(empty($time)){
-      header("Cache-Control: max-age=31536000, min-fresh=7200, public");
+      $CI->output->set_header("Cache-Control: max-age=31536000, min-fresh=7200, public");
     }else{
-      header("Cache-Control: max-age=".$time.", min-fresh=".$time.", public");
+      $CI->output->set_header("Cache-Control: max-age=".$time.", min-fresh=".$time.", public");
     }
+  }
+}
+
+if (!function_exists('use_nocache_header'))
+{
+  function use_nocache_header()
+  {
+    if(ENVIRONMENT !== 'production'){
+      return;
+    }
+    $CI = & get_instance();
+    $CI->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
   }
 }

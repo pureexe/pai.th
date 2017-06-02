@@ -28,7 +28,13 @@ class RedirectorCtrl extends CI_Controller {
     }else{
       //Only Cache for 10-minute if 404
       use_cache_header(600);
-      show_404();
+      $this->output->set_status_header(404);
+      $this->load->view('notfound');
     }
 	}
+  public function notfound()
+  {
+    $this->output->set_status_header(404);
+    $this->load->view('notfound');
+  }
 }

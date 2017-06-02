@@ -74,5 +74,5 @@ $route['api/v1/path/count']['get'] = 'Api/PathCtrl/count';
 $route['api/v1/path']['post'] = 'Api/PathCtrl/add';
 
 $route['(.+)'] = 'RedirectorCtrl';
-$route['404_override'] = '';
+$route['404_override'] = 'RedirectorCtrl/notfound';
 $route['translate_uri_dashes'] = FALSE;
