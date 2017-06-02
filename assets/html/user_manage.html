@@ -361,7 +361,7 @@
                   });
                 }catch(e){
                   try{
-                    window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.body.error.message);
+                    window.VueNotify.$emit('snackbar',error.body.error.message);
                   }catch(e){
                     console.log(error.body);
                     window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);

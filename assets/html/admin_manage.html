@@ -50,8 +50,7 @@
         <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
         <div class="mdl-layout-spacer"></div>
         <div v-show="user.username != ''">
-          <span style="margin-right: 15px;color:#fff">เพิ่มลิ้งค์</span>
-          <span style="margin-right: 15px;color:#fff">pureexe</span>
+          <span style="margin-right: 15px;color:#fff">{{user.username}}</span>
           <a href='#' v-on:click.prevent="logout" style="color:#fff">ออกจากระบบ</a>
         </div>
       </div>
@@ -112,7 +111,7 @@
         </tr>
       </thead>
       <tbody>
-        <row-user v-for=""></row-user>
+        <row-user v-for="user in userList" :key="user.id" :user="user" ></row-user>
       </tbody>
       <tfoot style="background-color: #f5f5f5;">
         <tr>
@@ -123,14 +122,17 @@
     </script>
     <script id="template-row-user" type="text/x-vue-template">
     <tr>
-      <td>1</td>
-      <td class="mdl-data-table__cell--non-numeric">pureexe</td>
-      <td class="mdl-data-table__cell--non-numeric">pure.gif@gmail.com</td>
+      <td>{{user.id}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{user.username}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{user.email}}</td>
       <td class="mdl-data-table__cell--non-numeric">
-        <button id="demo-menu-lower-left" class="mdl-button mdl-js-button ">
-            ผู้ดูแลระบบ
+        <button v-bind:id="'role-change-'+user.id" class="mdl-button mdl-js-button ">
+            {{user.type == "admin"?"ผู้ดูแลระบบ":""}}
+            {{user.type == "user"?"ผู้ใช้":""}}
+            {{user.type == "ban"?"แบน":""}}
+            {{user.type == "disable"?"ระงับ":""}}
         </button>
-        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-left">
+        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" v-bind:for="'role-change-'+user.id">
         <li class="mdl-menu__item">ผู้ใช้</li>
         <li class="mdl-menu__item">แบน</li>
         <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">ระงับ</li>
@@ -247,11 +249,38 @@
     Vue.component('table-users', {
       template: '#template-table-users',
       data: function(){
-        return {}
+        return {
+          userList: [],
+          isLoading: true,
+        }
       },
+      mounted: function(){
+        var self = this;
+        window.VueNotify.$on('onAuthenticate',function(user){
+          isLoading = true;
+          if(user){
+            this.$http.get('user/list?page=1&limit=1000').then(function(response){
+              self.userList = response.body.user;
+              isLoading = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              });
+            },function(error){
+              try{
+                window.VueNotify.$emit('snackbar',error.body.error.message);
+              }catch(e){
+                console.log(error.body);
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+              }
+              isLoading = false;
+            });
+          }
+        });
+      }
     });
     Vue.component('row-user', {
       template: '#template-row-user',
+      props: ['user'],
       data: function(){
         return {}
       },
