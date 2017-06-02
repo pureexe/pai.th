@@ -138,10 +138,10 @@
             </button>
           </div>
           <div class="tagline">
-            <p v-if="userType != 'admin'" style="margin:0px;">>
+            <p v-if="userType != 'admin'" style="margin:0px;">
               ขณะนี้ใช้ได้เพียง Google Drive, Koofr, Mega และ TAFASU เท่านั้น
             </p>
-            <p v-if="userType == 'admin'" style="margin:0px;">
+            <div v-if="userType == 'admin'" style="margin:0px;">
               <dialog id="CustomLinkDialog" class="mdl-dialog">
                 <h4 class="mdl-dialog__title" style="font-size:1.8rem;">สร้างลิ้งค์เพิ่มเติม</h4>
                 <div class="mdl-dialog__content">
@@ -163,7 +163,7 @@
                 </div>
               </dialog>
               สำหรับผู้ดูแลจะสามารถเพิ่มลิ้งค์ได้ทุกโดเมน และสามารถปรับแต่ลิ้งค์เองได้โดยการคลิก <a v-on:click.prevent="openCustomLinkDialog" href="#" style="color:#fff">ที่นี่</a>
-            </p>
+            </div>
           </div>
         </div>
       </div>
