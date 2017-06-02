@@ -287,8 +287,12 @@
       template: '#template-snackbar',
       mounted: function(){
         window.VueNotify.$on('snackbar',function(str){
+          var html = str;
+          var div = document.createElement("div");
+          div.innerHTML = html;
+          var text = div.textContent || div.innerText || "";
           document.querySelector('#snackbarContainer')
-            .MaterialSnackbar.showSnackbar({message:str});
+            .MaterialSnackbar.showSnackbar({message:text});
         });
       }
     });
