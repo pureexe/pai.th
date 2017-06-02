@@ -21,90 +21,10 @@ class UserCtrl extends CI_Controller {
 	}
   public function index()
   {
-    $user = $this->User->get();
-    if(!empty($user)){
-      $this->Rest->render($user);
+    if(!empty($this->user)){
+      $this->Rest->render($this->user);
     }else{
       $this->Rest->error("signin required");
     }
-  }
-  public function create()
-  {
-    if(empty($this->user) || $this->user['type'] != 'admin'){
-      return $this->Rest->error('only admin can create user');
-    }
-    $this->form_validation
-      ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]')
-      ->set_rules('email', 'email', 'required|trim|valid_email|is_unique[user.email]');
-    if ($this->form_validation->run() == FALSE){
-      return $this->Rest->error(validation_errors(),1);
-    }
-    $username = $this->input->post("username");
-    $email = $this->input->post("email");
-    $password = $this->input->post("password");
-    //create random string if password not set
-    if(empty($password)){
-      $this->load->helper('string');
-      $password = random_string('alnum',8);
-    }
-    $id = $this->User->create($username,$email,$password);
-    $token = $this->User->generateInviteToken($id);
-    $this->Rest->render(array(
-      "id" => $id,
-      "invite_token" => $token
-    ));
-  }
-  public function remove($uid)
-  {
-    if(empty($this->user) || $this->user['type'] != 'admin'){
-      return $this->Rest->error('only admin can remove user');
-    }
-    if(!$this->User->isExist($uid)){
-      return $this->Rest->error('can\'t remove non-exist user');
-    }
-    $this->User->remove($uid);
-    $this->Rest->render(array(
-        "id" => intval($uid)
-    ));
-  }
-  public function update($uid)
-  {
-    if(empty($this->user) || $this->user['type'] != 'admin'){
-      return $this->Rest->error('only admin can change user data');
-    }
-    $quota = $this->input->post('quota');
-    $type = $this->input->post('type');
-    $user = $this->User->get($uid);
-    if(empty($user)){
-        return $this->Rest->error('can\'t modify non-exist user');
-    }
-    if(!empty($quota) && is_numeric($quota)){
-      $this->load->driver('cache',array(
-            'adapter' => 'apc',
-            'backup' => 'file',
-            'key_prefix' => 'quota_shorten_'
-      ));
-      $this->cache->delete($user['username']);
-      $this->User->setQuota($uid,intval($quota));
-    }
-    if(!empty($type) && in_array($type,array('admin','user','ban','disable'))){
-      $this->User->setType($uid,$type);
-    }
-    $this->Rest->render(array(
-      "id" => intval($uid)
-    ));
-  }
-  public function invite($uid)
-  {
-    if(empty($this->user) || $this->user['type'] != 'admin'){
-      return $this->Rest->error('only admin can issue invite token');
-    }
-    if(!$this->User->isExist($uid)){
-      return $this->Rest->error('can\'t issue invite token for non-exist user');
-    }
-    $token = $this->User->generateInviteToken($uid);
-    $this->Rest->render(array(
-      "invite_token" => $token
-    ));
   }
 }

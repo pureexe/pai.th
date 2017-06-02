@@ -140,4 +140,19 @@ class User extends CI_Model {
         'shorten_quota' => $cnt
       ));
   }
+  public function list($page,$limit)
+  {
+    $page = ($page-1)*$limit;
+    $query = $this->db
+      ->select('id,username,email,type,invite_token,shorten_quota')
+      ->from('user')
+      ->order_by('id','DESC')
+      ->limit($limit, $page);
+    $output = $query->get()->result_array();
+    foreach ($output as &$o) {
+      $o['id'] = intval($o['id']);
+      $o['shorten_quota'] = intval($o['shorten_quota']);
+    }
+    return $output;
+  }
 }
