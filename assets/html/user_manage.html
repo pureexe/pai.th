@@ -394,7 +394,7 @@
                   try{
                     window.VueNotify.$emit('snackbar',error.body.error.message);
                   }catch(e){
-                    console.log(error.body);
+                    console.error(error.body);
                     window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
                   }
                 }
@@ -462,7 +462,7 @@
               });
             },function(error){
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
-              console.log(error.body);
+              console.error(error.body);
               self.isLoading = false;
             });
           },
@@ -491,7 +491,7 @@
                 self.totalItem = response.body.count;
               },function(error){
                 window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
-                console.log(error.body);
+                console.error(error.body);
                 self.isLoading = false;
               });
             }else{
