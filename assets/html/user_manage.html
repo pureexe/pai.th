@@ -398,7 +398,7 @@
               self.isLoading = false;
               self.$nextTick(function () {
                 window.componentHandler.upgradeDom();
-              })
+              });
             },function(error){
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
               console.log(error.body);
