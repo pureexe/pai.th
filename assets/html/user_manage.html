@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-indigo.min.css" />
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-deep_orange.min.css" />
     <link href="https://fonts.googleapis.com/css?family=Athiti" rel="stylesheet">
     <style>
     .footer{
@@ -89,7 +89,7 @@
   <body>
     <div id="user_manage">
       <page-loading v-show="page == 'loading'"></page-loading>
-      <div class="mdl-layout mdl-js-layout">
+      <div class="mdl-layout mdl-js-layout" v-show="page != 'loading'">
         <page-header></page-header>
         <page-signin v-show="page == 'signin'"></page-signin>
         <page-manage v-show="page == 'manage'"></page-manage>
@@ -114,7 +114,6 @@
     <script id="template-footer" type="text/x-vue-template">
       <footer style="padding-top: 10px;padding-bottom: 10px;color: #777;background-color: #eee;">
         <div class="container" style="display:flex">
-          <div style="flex-grow: 1;">
           <ul class="mdl-mini-footer__link-list">
             <li style="margin-right:15px;">
               <a href="https://ซับ.ไทย" style="font-family: Athiti, sans-serif;">ซับ.ไทย</a>
@@ -127,7 +126,7 @@
       </footer>
     </script>
     <script id="template-banner-create" type="text/x-vue-template">
-      <div style="padding: 40px 0px 40px 0px;" class="mdl-color--primary mdl-shadow--2dp">
+      <div style="padding: 40px 0px 40px 0px;" v-bind:class="{'mdl-color--primary':userType != 'admin','mdl-color--accent':userType == 'admin','mdl-shadow--2dp':true}">
         <div class="container">
           <div>
             <h2 class="short-header">ย่อลิงก์ให้ใช้ง่าย</h2>
@@ -139,7 +138,32 @@
             </button>
           </div>
           <div class="tagline">
-            ขณะนี้ใช้ได้เพียง Google Drive, Koofr, Mega และ TAFASU เท่านั้น
+            <p v-if="userType != 'admin'" style="margin:0px;">>
+              ขณะนี้ใช้ได้เพียง Google Drive, Koofr, Mega และ TAFASU เท่านั้น
+            </p>
+            <p v-if="userType == 'admin'" style="margin:0px;">
+              <dialog id="CustomLinkDialog" class="mdl-dialog">
+                <h4 class="mdl-dialog__title" style="font-size:1.8rem;">สร้างลิ้งค์เพิ่มเติม</h4>
+                <div class="mdl-dialog__content">
+                  <form v-on:submit.prevent="doAddUser">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <input class="mdl-textfield__input" type="text" id="fullURL" v-model="fullURL">
+                      <label class="mdl-textfield__label" for="fullURL">ลิงก์เต็ม</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <input class="mdl-textfield__input" type="text" id="shortURL" v-model="shortURL">
+                      <label class="mdl-textfield__label" for="shortURL">ลิงก์สั้น (ไม่ใส่โดเมน)</label>
+                    </div>
+                    <p class="red">{{CustomLinkDialogErrorMessage}}</p>
+                  </form>
+                </div>
+                <div class="mdl-dialog__actions">
+                  <button type="button" class="mdl-button" v-on:click.prevent="createCustomLinkDialog">สร้าง</button>
+                  <button type="button" class="mdl-button close" v-on:click.prevent="closeCustomLinkDialog">ยกเลิก</button>
+                </div>
+              </dialog>
+              สำหรับผู้ดูแลจะสามารถเพิ่มลิ้งค์ได้ทุกประเภท และสามารถปรับแต่ลิ้งค์เองได้โดยการคลิก <a v-on:click.prevent="openCustomLinkDialog" href="#" style="color:#fff">ที่นี่</a>
+            </p>
           </div>
         </div>
       </div>
@@ -325,18 +349,25 @@
         template: '#template-banner-create',
         data: function(){
           return {
+            userType: "user",
             fullURL: "",
+            shortURL: "",
+            CustomLinkDialogErrorMessage: "",
             shortening: false,
           }
         },methods: {
-          addShortLink: function(url){
+          addShortLink: function(url,short){
             var self = this;
             url = url.trim();
             if(url.length == 0){
               return ;
             }
             this.shortening = true;
-            this.$http.post('path',{full:url}).then(
+            var data = {full:url};
+            if(short){
+              data = {full:url,short:short}
+            }
+            this.$http.post('path',data).then(
               function(response){
                 window.VueNotify.$emit('newShortURL',{
                   full: url,
@@ -371,7 +402,34 @@
                 self.fullURL = "";
               }
             );
+          },
+          openCustomLinkDialog: function(){
+            document.querySelector('#CustomLinkDialog').showModal();
+          },
+          createCustomLinkDialog: function(){
+            if(this.shortURL.indexOf("://") != -1){
+              return this.CustomLinkDialogErrorMessage = "ไม่อนุญาตให้มี URL shame (://) ในลิงก์";
+            }
+            if(this.shortURL.indexOf("ซับ.ไทย") != -1){
+              return this.CustomLinkDialogErrorMessage = "ไม่อนุญาตให้มีคำว่า ซับ.ไทย ในลิงก์";
+            }
+            this.CustomLinkDialogErrorMessage = "";
+            document.querySelector('#CustomLinkDialog').close();
+            this.addShortLink(this.fullURL,this.shortURL);
+          },
+          closeCustomLinkDialog: function(){
+            document.querySelector('#CustomLinkDialog').close();
           }
+        },
+        mounted: function(){
+          var self = this;
+          window.VueNotify.$on('onAuthenticate',function(user){
+            if(user){
+              self.userType = user.type;
+            }else{
+              self.userType = 'user';
+            }
+          });
         }
       });
       Vue.component('table-path', {
