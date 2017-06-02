@@ -17,15 +17,19 @@ class PathCtrl extends CI_Controller {
       ->model('User');
     $this->lang->load("subth","thai");
     $this->user = $this->User->get();
+    if(empty($this->user)){
+      $this->Rest->error('login_is_required_for_this_action');
+      $this->output->_display();
+      exit();
+    }
+    if($this->user['type'] == 'ban' || $this->user['type'] == 'disable'){
+      $this->Rest->error('your_account_is_suppend');
+      $this->output->_display();
+      exit();
+    }
   }
   public function add()
   {
-    if(empty($this->user)){
-      return $this->Rest->error('login_is_required_for_this_action');
-    }
-    if($this->user['type'] == 'ban' || $this->user['type'] == 'disable'){
-      return $this->Rest->error('your_account_is_suppend');
-    }
     $fullUrl = $this->input->post("full");
     $shortUrl = $this->input->post("short");
     if((!empty($shortUrl)) && $this->user['type'] != 'admin'){
@@ -72,12 +76,6 @@ class PathCtrl extends CI_Controller {
   }
   public function fullurl_check($fullURL)
   {
-    if(empty($this->user)){
-      return $this->Rest->error('login_is_required_for_this_action');
-    }
-    if($this->user['type'] == 'ban' || $this->user['type'] == 'disable'){
-      return $this->Rest->error('your_account_is_suppend');
-    }
     $this->load->config('subth');
     $hostname = $this->config->item('shorten_whitelist');
     if($this->user['type'] != 'admin' && !in_array(parse_url($fullURL, PHP_URL_HOST),$hostname)){
@@ -89,12 +87,6 @@ class PathCtrl extends CI_Controller {
   }
   public function all()
   {
-    if(empty($this->user)){
-      return $this->Rest->error('login_is_required_for_this_action');
-    }
-    if($this->user['type'] == 'ban' || $this->user['type'] == 'disable'){
-      return $this->Rest->error('your_account_is_suppend');
-    }
     $page = $this->input->get('page');
     $limit = $this->input->get('limit');
     $page = empty($page)?1:$page;
@@ -117,12 +109,6 @@ class PathCtrl extends CI_Controller {
   }
   public function count()
   {
-    if(empty($this->user)){
-      return $this->Rest->error('login_is_required_for_this_action');
-    }
-    if($this->user['type'] == 'ban' || $this->user['type'] == 'disable'){
-      return $this->Rest->error('your_account_is_suppend');
-    }
     $forceUid = $this->input->get('uid');
     if(empty($forceUid) && $forceUid=='0'){
       $uid = 0;

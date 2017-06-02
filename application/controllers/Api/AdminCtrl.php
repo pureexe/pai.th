@@ -14,12 +14,14 @@ class AdminCtrl extends CI_Controller {
     $this->load->library('form_validation');
     $this->lang->load("subth","thai");
     $this->user = $this->User->get();
+    if(empty($this->user) || $this->user['type'] != 'admin'){
+      $this->Rest->error($this->lang->line("only_admin_can_do"));
+      $this->output->_display();
+      exit();
+    }
 	}
   public function create()
   {
-    if(empty($this->user) || $this->user['type'] != 'admin'){
-      return $this->Rest->error($this->lang->line("only_admin_can_do"));
-    }
     $this->form_validation
       ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]')
       ->set_rules('email', 'email', 'required|trim|valid_email|is_unique[user.email]');
@@ -43,9 +45,6 @@ class AdminCtrl extends CI_Controller {
   }
   public function remove($uid)
   {
-    if(empty($this->user) || $this->user['type'] != 'admin'){
-      return $this->Rest->error($this->lang->line("only_admin_can_do"));
-    }
     if(!$this->User->isExist($uid)){
       return $this->Rest->error($this->lang->line("cant_remove_non_exist_user"));
     }
