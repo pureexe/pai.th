@@ -407,6 +407,9 @@
             document.querySelector('#CustomLinkDialog').showModal();
           },
           createCustomLinkDialog: function(){
+            if(this.shortURL.trim().length == 0){
+              return this.CustomLinkDialogErrorMessage = "ไม่สามารถเว้นลิ้งค์ย่อได้";
+            }
             if(this.shortURL.indexOf("://") != -1){
               return this.CustomLinkDialogErrorMessage = "ไม่อนุญาตให้มี URL shame (://) ในลิงก์";
             }
