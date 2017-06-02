@@ -20,30 +20,10 @@ class Welcome extends CI_Controller {
 	 */
 	public function __construct() {
 	 	parent::__construct();
-		$this->load->model("User");
-    $this->load->model("Rest");
-		$this->load->library('form_validation');
  	}
 	public function index()
 	{
 		$this->form_validation->set_rules('username','username','required');
 		$this->load->view('welcome_message');
-	}
-	public function write()
-	{
-		$this->load->library("session");
-		$this->load->library("session");
-		$this->session->set_userdata(array(
-			'userid' => 12355
-		));
-		session_write_close();
-	}
-	public function read()
-	{
-		$fullURL = "k00.fr/abcd";
-		if(strpos($fullURL, '://') === false){
-      $fullURL = "http://".$fullURL;
-    }
-		echo $fullURL;
 	}
 }

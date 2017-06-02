@@ -59,12 +59,8 @@ class AdminCtrl extends CI_Controller {
         return $this->Rest->error('can\'t modify non-exist user');
     }
     if(!empty($quota) && is_numeric($quota)){
-      $this->load->driver('cache',array(
-            'adapter' => 'apc',
-            'backup' => 'file',
-            'key_prefix' => 'quota_shorten_'
-      ));
-      $this->cache->delete($user['username']);
+      $this->load->driver('cache',array('adapter' => 'apc','backup' => 'file'));
+      $this->cache->delete('quota_shorten_'.$user['username']);
       $this->User->setQuota($uid,intval($quota));
     }
     if(!empty($type) && in_array($type,array('admin','user','ban','disable'))){

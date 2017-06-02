@@ -73,10 +73,6 @@ $route['api/v1/path']['get'] = 'Api/PathCtrl/list';
 $route['api/v1/path/count']['get'] = 'Api/PathCtrl/count';
 $route['api/v1/path']['post'] = 'Api/PathCtrl/add';
 
-//debug
-$route['write'] =  'welcome/write';
-$route['read'] =  'welcome/read';
-
 $route['(.+)'] = 'RedirectorCtrl';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
