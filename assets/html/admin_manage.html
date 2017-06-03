@@ -99,12 +99,8 @@
             <div class="mdl-dialog__content">
               <form v-on:submit.prevent="doAddUser">
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input class="mdl-textfield__input" type="text" id="username" v-model="username" autocomplete="off">
-                  <label class="mdl-textfield__label" for="username">ชื่อผู้ใช้</label>
-                </div>
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input class="mdl-textfield__input" type="text" id="email" v-model="email" autocomplete="off">
-                  <label class="mdl-textfield__label" for="email">อีเมล</label>
+                  <input class="mdl-textfield__input" type="text" id="note" v-model="note" autocomplete="off">
+                  <label class="mdl-textfield__label" for="note">โน้ต</label>
                 </div>
                 <p class="red">{{dialog_error_message}}</p>
               </form>
@@ -127,7 +123,7 @@
         <tr>
           <th>ไอดี</th>
           <th class="mdl-data-table__cell--non-numeric">ชื่อผู้ใช้</th>
-          <th class="mdl-data-table__cell--non-numeric">อีเมล</th>
+          <th class="mdl-data-table__cell--non-numeric">โน้ต</th>
           <th class="mdl-data-table__cell--non-numeric">สถานะ</th>
           <th class="mdl-data-table__cell--non-numeric">บัตรเชิญ</th>
           <th>โควต้า</th>
@@ -147,7 +143,7 @@
     <tr>
       <td>{{user.id}}</td>
       <td class="mdl-data-table__cell--non-numeric">{{user.username}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{user.email}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{user.note}}</td>
       <td class="mdl-data-table__cell--non-numeric">
         <div v-if="user.type != 'waiting...'">
           <button v-bind:id="'role-change-'+user.id" class="mdl-button mdl-js-button ">
@@ -171,9 +167,14 @@
         <button class="mdl-button mdl-js-button" v-if="user.invite_token == '' && !creatingInviteToken" v-on:click.prevent="createInvite">
           -
         </button>
-        <button class="mdl-button mdl-js-button" v-if="user.invite_token != '' && user.invite_token != 'generating...' && !creatingInviteToken" v-on:click.prevent="copyInvite">
-          {{user.invite_token}} <i class="icon material-icons">content_copy</i>
+        <div v-if="user.invite_token != '' && user.invite_token != 'generating...' && !creatingInviteToken">
+        <button class="mdl-button mdl-js-button"  v-on:click.prevent="copyInvite">
+          {{user.invite_token}}
         </button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeInvite">
+          <i class="icon material-icons">delete</i>
+        </button>
+        </div>
       </td>
       <td>
         <dialog v-bind:id="'shorten_quota_dialog_'+user.id" class="mdl-dialog">
@@ -364,7 +365,7 @@
       mounted: function(){
         var self = this;
         if(self.user.tempId){
-          self.$http.post('user',{username:self.user.username,email:self.user.email}).then(function(response){
+          self.$http.post('user/invite',{note:self.user.note}).then(function(response){
             delete self.user.tempId;
             self.user.type='user';
             self.user.shorten_quota = 33;
@@ -390,7 +391,7 @@
         copyInvite: function(){
           var copied = window.copyTextToClipboard("https://ซับ.ไทย/สมัคร?บัตรเชิญ="+this.user.invite_token);
           if(copied){
-            window.VueNotify.$emit('snackbar',"คัดลอกบัตรเชิญของ "+this.user.username+" แล้ว");
+            window.VueNotify.$emit('snackbar',"คัดลอกบัตรเชิญของ "+((this.user.username)?this.user.username:this.user.note)+" แล้ว");
           }else{
             window.VueNotify.$emit('snackbar','เบราว์เซอร์นี้ไม่สามารถคัดลอกได้');
           }
@@ -412,6 +413,23 @@
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
           });
+        },
+        removeInvite: function(){
+          this.$http.delete('user/'+this.user.id+'/invite').then(function(response){
+              //Do nothing;
+          },function(error){
+            try{
+              window.VueNotify.$emit('snackbar',error.body.error.message);
+            }catch(e){
+              console.error(error.body);
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            }
+          });
+          if(this.user.username == ""){
+            window.VueNotify.$emit('removeById',this.user.id);
+          }else{
+            this.user.invite_token = "";
+          }
         },
         changeUserType: function(type){
           this.user.type = type;
@@ -468,8 +486,7 @@
       template: '#template-page-users',
       data: function(){
         return {
-          "username": "",
-          "email": "",
+          "note": "",
           "dialog_error_message": ""
         }
       },
@@ -482,11 +499,11 @@
         },
         doAddUser: function()
         {
-          if(this.username == "" || this.email == ""){
-            return this.dialog_error_message = "กรุณาใส่ชื่อผู้ใช้และอีเมล";
+          if(this.note == ""){
+            return this.dialog_error_message = "กรุณาใส่โน้ตเพื่อช่วยจำ";
           }
           this.dialog_error_message = "";
-          window.VueNotify.$emit('doAddUser',{username:this.username,email:this.email});
+          window.VueNotify.$emit('doAddUser',{note:this.note});
           this.username = "";
           this.email = "";
           document.querySelector('#addUserDialog').close();

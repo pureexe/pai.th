@@ -62,12 +62,21 @@ class User extends CI_Model {
   }
   public function generateInviteToken($userId)
   {
+    $token = $this->getUniqueInvite();
     $this->db
       ->where('id',$userId)
       ->update('user',array(
-        'invite_token' => $this->getUniqueInvite()
+        'invite_token' => $token
       ));
     return $token;
+  }
+  public function removeInviteToken($uid)
+  {
+    $this->db
+      ->where('id',$uid)
+      ->update('user',array(
+        'invite_token' => ''
+      ));
   }
   public function inviteTokenForNewUser($note = '')
   {
@@ -194,7 +203,7 @@ class User extends CI_Model {
   {
     $page = ($page-1)*$limit;
     $query = $this->db
-      ->select('id,username,type,invite_token,shorten_quota')
+      ->select('id,username,type,note,invite_token,shorten_quota')
       ->from('user')
       ->order_by('id','DESC')
       ->limit($limit, $page);

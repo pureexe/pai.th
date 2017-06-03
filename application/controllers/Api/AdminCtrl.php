@@ -88,6 +88,21 @@ class AdminCtrl extends CI_Controller {
       ));
     }
   }
+  public function removeInvite($uid)
+  {
+    $user = $this->User->get($uid);
+    if(empty($user)){
+        return $this->Rest->error($this->lang->line('cant_modify_non_exist_user'));
+    }
+    if(empty($user['username'])){
+      $this->remove($uid);
+    }else{
+      $this->User->removeInviteToken($uid);
+    }
+    return $this->Rest->render(array(
+      "id" => intval($uid)
+    ));
+  }
   public function all()
   {
     $limit = $this->input->get('limit');
