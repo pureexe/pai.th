@@ -142,7 +142,11 @@
     <script id="template-row-user" type="text/x-vue-template">
     <tr>
       <td>{{user.id}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{user.username}}</td>
+      <td class="mdl-data-table__cell--non-numeric">
+        <button class="mdl-button mdl-js-button" v-if="user.username" style="text-transform: none;" v-on:click.prevent="overrideAccount">
+          {{user.username}}
+        </button>
+      </td>
       <td class="mdl-data-table__cell--non-numeric">{{user.note}}</td>
       <td class="mdl-data-table__cell--non-numeric">
         <div v-if="user.type != 'waiting...'">
@@ -425,11 +429,15 @@
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
           });
-          if(this.user.username == ""){
+          console.log(this.user.username);
+          if(this.user.username === undefined || this.user.username==""){
             window.VueNotify.$emit('removeById',this.user.id);
           }else{
             this.user.invite_token = "";
           }
+        },
+        overrideAccount: function(){
+            console.log("override account implement");
         },
         changeUserType: function(type){
           this.user.type = type;
