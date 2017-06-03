@@ -132,7 +132,7 @@
             <h2 class="short-header">ย่อลิงก์ให้ใช้ง่าย</h2>
           </div>
           <div>
-            <input type="text" class="long-text-input" placeholder="กรอก URL เต็มที่นี่" style="margin-top:10px;" v-model="fullURL" :disabled="shortening"></input>
+            <input type="text" class="long-text-input" placeholder="กรอก URL เต็มที่นี่" style="margin-top:10px;" v-model="fullURL" :disabled="shortening" autocomplete="off" />
             <button :disabled="shortening" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="background-color: white;margin-top:10px;" v-on:click="addShortLink(fullURL)">
                 ย่อลิงก์
             </button>
@@ -147,11 +147,11 @@
                 <div class="mdl-dialog__content">
                   <form v-on:submit.prevent="doAddUser">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                      <input class="mdl-textfield__input" type="text" id="fullURL" v-model="fullURL">
+                      <input class="mdl-textfield__input" type="text" id="fullURL" v-model="fullURL" autocomplete="off" />
                       <label class="mdl-textfield__label" for="fullURL">ลิงก์เต็ม</label>
                     </div>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                      <input class="mdl-textfield__input" type="text" id="shortURL" v-model="shortURL">
+                      <input class="mdl-textfield__input" type="text" id="shortURL" v-model="shortURL" autocomplete="off" />
                       <label class="mdl-textfield__label" for="shortURL">ลิงก์สั้น (ไม่ใส่โดเมน)</label>
                     </div>
                     <p class="red">{{CustomLinkDialogErrorMessage}}</p>
@@ -241,11 +241,11 @@
           <div class="card mdl-card mdl-shadow--2dp" style="padding:20px;width: auto;max-width: 320px;min-height: 0;">
             <form action="" method="post" v-on:submit.prevent="onSubmit">
               <div class="mdl-textfield mdl-js-textfield" style="display:block">
-                <input class="mdl-textfield__input" type="text" id="username" name="text" v-model="username">
+                <input class="mdl-textfield__input" type="text" id="username" name="text" v-model="username" autocomplete="off"/>
                 <label class="mdl-textfield__label" for="username">ชื่อผู้ใช้หรืออีเมล</label>
               </div>
               <div class="mdl-textfield mdl-js-textfield" style="display:block">
-                <input class="mdl-textfield__input" type="password" id="password" name="password" v-model="password" >
+                <input class="mdl-textfield__input" type="password" id="password" name="password" v-model="password" autocomplete="off"/>
                 <label class="mdl-textfield__label" for="password">รหัสผ่าน</label>
               </div>
               <center>
