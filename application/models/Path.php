@@ -94,6 +94,8 @@ class Path extends CI_Model {
   }
   public function point($fullUrl,$shortUrl,$uid)
   {
+    $this->load->model('PathFirebase');
+    $this->PathFirebase->point($fullUrl,$shortUrl);
     $this->db->insert('path',array(
       'owner' => empty($uid)?0:$uid,
       'full' => $fullUrl,

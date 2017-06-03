@@ -71,11 +71,11 @@
           <div class="card mdl-card mdl-shadow--2dp" style="padding:20px;width: auto;max-width: 320px;min-height: 0;">
             <form action="" method="post" v-on:submit.prevent="onSubmit">
               <div class="mdl-textfield mdl-js-textfield" style="display:block">
-                <input class="mdl-textfield__input" type="text" id="username" name="text" v-model="username">
+                <input class="mdl-textfield__input" type="text" id="username" name="text" v-model="username" autocomplete="off">
                 <label class="mdl-textfield__label" for="username">ชื่อผู้ใช้หรืออีเมล</label>
               </div>
               <div class="mdl-textfield mdl-js-textfield" style="display:block">
-                <input class="mdl-textfield__input" type="password" id="password" name="password" v-model="password" >
+                <input class="mdl-textfield__input" type="password" id="password" name="password" v-model="password" autocomplete="off">
                 <label class="mdl-textfield__label" for="password">รหัสผ่าน</label>
               </div>
               <center>
@@ -99,11 +99,11 @@
             <div class="mdl-dialog__content">
               <form v-on:submit.prevent="doAddUser">
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input class="mdl-textfield__input" type="text" id="username" v-model="username">
+                  <input class="mdl-textfield__input" type="text" id="username" v-model="username" autocomplete="off">
                   <label class="mdl-textfield__label" for="username">ชื่อผู้ใช้</label>
                 </div>
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input class="mdl-textfield__input" type="text" id="email" v-model="email">
+                  <input class="mdl-textfield__input" type="text" id="email" v-model="email" autocomplete="off">
                   <label class="mdl-textfield__label" for="email">อีเมล</label>
                 </div>
                 <p class="red">{{dialog_error_message}}</p>
@@ -181,7 +181,7 @@
           <div class="mdl-dialog__content">
             <form v-on:submit.prevent="changeUserQuota">
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number"  v-bind:id="'shorten_quota_'+user.id" v-model="shorten_quota">
+                <input class="mdl-textfield__input" type="number"  v-bind:id="'shorten_quota_'+user.id" v-model="shorten_quota" autocomplete="off">
                 <label class="mdl-textfield__label" v-bind:for="'shorten_quota_'+user.id">โควต้า</label>
               </div>
               <p class="red">{{shorten_quota_error}}</p>
