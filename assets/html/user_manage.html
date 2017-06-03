@@ -106,7 +106,9 @@
           <span class="mdl-layout-title" style="color:#333;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
           <div class="mdl-layout-spacer"></div>
           <div v-show="user.username != ''">
-            <span style="margin-right: 15px;">{{user.username}}</span> <a href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
+            <a style="margin-right: 15px;" href='/ผู้ดูแล' v-show="user.type == 'admin'">ผู้ดูแล</a>
+            <span style="margin-right: 15px;">{{user.username}}</span>
+            <a href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
           </div>
         </div>
       </header>
@@ -118,10 +120,16 @@
             <li style="margin-right:15px;">
               <a href="https://ซับ.ไทย" style="font-family: Athiti, sans-serif;">ซับ.ไทย</a>
             </li>
-            <li style="margin-right:15px;">
-              <a href="https://www.tafasu.com">TAFASU</a>
-            </li>
           </ul>
+          <div style="flex-grow: 1; ">
+          </div>
+          <div>
+            <ul class="mdl-mini-footer__link-list">
+              <li style="margin-right:15px;">
+                <a href="https://ซับ.ไทย" style="font-family: Athiti, sans-serif;">สงวนลิขสิทธิ์ 2560</a>
+              </li>
+            </ul>
+          </div>
         </div>
       </footer>
     </script>

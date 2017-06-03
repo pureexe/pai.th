@@ -68,6 +68,7 @@ $route['api/v1/user/(:num)']['get'] = 'Api/AdminCtrl/get/$1'; //admin only!
 $route['api/v1/user/(:num)']['post'] = 'Api/AdminCtrl/update/$1'; //updte quota or permission
 $route['api/v1/user/(:num)']['delete'] = 'Api/AdminCtrl/remove/$1'; //remove user
 $route['api/v1/user/(:num)/invite']['post'] = 'Api/AdminCtrl/invite/$1'; //re issue invite
+$route['api/v1/user/(:num)/invite']['delete'] = 'Api/AdminCtrl/removeInvite/$1';
 $route['api/v1/auth']['post'] = 'Api/AuthCtrl/signin';
 $route['api/v1/auth']['delete'] = 'Api/AuthCtrl/logout';
 $route['api/v1/path']['get'] = 'Api/PathCtrl/all';
