@@ -13,7 +13,7 @@ class AdminCtrl extends CI_Controller {
     $this->load->model("User")->model("Rest");
     $this->load->library('form_validation');
     $this->lang->load("subth","thai");
-    $this->user = $this->User->get();
+    $this->user = $this->User->getReal();
     if(empty($this->user) || $this->user['type'] != 'admin'){
       $this->Rest->error($this->lang->line("only_admin_can_do"));
       $this->output->_display();
@@ -23,8 +23,7 @@ class AdminCtrl extends CI_Controller {
   public function create()
   {
     $this->form_validation
-      ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]')
-      ->set_rules('email', 'email', 'required|trim|valid_email|is_unique[user.email]');
+      ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]');
     if ($this->form_validation->run() == FALSE){
       return $this->Rest->error(validation_errors(),1);
     }
@@ -73,15 +72,20 @@ class AdminCtrl extends CI_Controller {
       "id" => intval($uid)
     ));
   }
-  public function invite($uid)
+  public function invite($uid = 0)
   {
-    if(!$this->User->isExist($uid)){
+    if(empty($uid)){
+      $token = $this->User->inviteTokenForNewUser();
+      return $this->Rest->render($token);
+    }else if(!$this->User->isExist($uid)){
       return $this->Rest->error($this->lang->line('cant_issue_invite_token_for_non_exist_user'));
+    }else{
+      $token = $this->User->generateInviteToken($uid);
+      return $this->Rest->render(array(
+        "id" => intval($uid),
+        "invite_token" => $token
+      ));
     }
-    $token = $this->User->generateInviteToken($uid);
-    $this->Rest->render(array(
-      "invite_token" => $token
-    ));
   }
   public function all()
   {

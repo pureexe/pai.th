@@ -6,6 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 **/
 class User extends CI_Model {
   private $userid;
+  private $realUserId;
   public function __construct()
   {
     parent::__construct();
@@ -27,25 +28,25 @@ class User extends CI_Model {
   /**
   * Warning form_validation is required before call this method
   * @see Api/UserCtrl/createUser
-  * create user by username email and password
+  * create user by username and password
   * @method create
-  * @param username,email,password (plain-text!)
+  * @param username,password (plain-text!)
   **/
-  public function create($username,$email,$password)
+  /*
+  public function create($username,$password)
   {
     $this->load->library('phpass');
     $this->load->config('subth');
     $hash = $this->phpass->hash($password);
     $this->db->insert('user',array(
       'username' => $username,
-      'email' => $email,
       'password' => $hash,
       'type' => 'user',
       'shorten_quota' => $this->config->item('shorten_quota')
     ));
     return intval($this->db->insert_id());
-  }
-  public function generateInviteToken($userId)
+  }*/
+  public function getUniqueInvite()
   {
     $this->load->helper('thaistring');
     while(true){
@@ -57,12 +58,31 @@ class User extends CI_Model {
         break;
       }
     }
+    return $token;
+  }
+  public function generateInviteToken($userId)
+  {
     $this->db
       ->where('id',$userId)
       ->update('user',array(
-        'invite_token' => $token
+        'invite_token' => $this->getUniqueInvite()
       ));
     return $token;
+  }
+  public function inviteTokenForNewUser()
+  {
+    $this->load->config('subth');
+    $token = $this->getUniqueInvite();
+    $this->db->insert('user',array(
+      'type' => 'user',
+      'invite_token' => $token,
+      'shorten_quota' => $this->config->item('shorten_quota')
+    ));
+    $uid = intval($this->db->insert_id());
+    return array(
+      'id' => $uid,
+      'invite_token' => $token
+    );
   }
   public function setPasswordInvite($invite_token,$password)
   {
@@ -78,18 +98,36 @@ class User extends CI_Model {
   }
   public function getByInviteToken($invite_token){
     $query = $this->db
-      ->select('username,email')
+      ->select('username')
       ->from('user')
       ->where('invite_token',$invite_token);
     $data = $query->get()->result_array();
     return empty($data)?null:$data[0];
+  }
+  public function getReal()
+  {
+    $uid = $this->getRealId();
+    return $this->get($uid);
+  }
+  public function getRealId(){
+    if(empty($this->realUserId)){
+      $this->load->library('session');
+      session_write_close();
+      $this->realUserId = $this->session->userid;
+    }
+    return $this->realUserId;
   }
   public function getId()
   {
     if(empty($this->userid)){
       $this->load->library('session');
       session_write_close();
-      $this->userid = $this->session->userid;
+      $this->userid = $this->session->userid_override;
+      if(empty($this->userid)){
+        $this->userid = $this->session->userid;
+      }else{
+        $this->realUserId = $this->session->userid;
+      }
     }
     return $this->userid;
   }
@@ -99,7 +137,7 @@ class User extends CI_Model {
       $uid = $this->getId();
     }
     $query = $query = $this->db
-      ->select('id,username,email,type,shorten_quota')
+      ->select('id,username,type,shorten_quota')
       ->from('user')
       ->where('id',$uid);
     $users = $query->get()->result_array();
@@ -144,7 +182,7 @@ class User extends CI_Model {
   {
     $page = ($page-1)*$limit;
     $query = $this->db
-      ->select('id,username,email,type,invite_token,shorten_quota')
+      ->select('id,username,type,invite_token,shorten_quota')
       ->from('user')
       ->order_by('id','DESC')
       ->limit($limit, $page);

@@ -15,16 +15,22 @@ class UserCtrl extends CI_Controller {
   public function __construct()
 	{
     parent::__construct();
-    $this->load->model("User")->model("Rest");
-    $this->load->library('form_validation');
-    $this->user = $this->User->get();
+    $this->load->model('User')->model('Rest');
 	}
   public function index()
   {
+    $this->load->library('session');
+    $useRealUser = $this->input->get('real');
+    if(!empty($useRealUser)){
+      $this->user = $this->User->getReal();
+    }else{
+      $this->user = $this->User->get();
+    }
     if(!empty($this->user)){
       $this->Rest->render($this->user);
     }else{
-      $this->Rest->error("signin required");
+      $this->lang->load('subth','thai');
+      $this->Rest->error($this->lang->line('signin_required'));
     }
   }
 }
