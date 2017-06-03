@@ -12,6 +12,9 @@
     <h1>ซับ.ไทย</h1>
     <div class="card mdl-card mdl-shadow--2dp" id="app" style="color:red">
       <?=$error_message?>
+      <a href="javascript:window.history.back()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" style="    display: block;margin-top: 15px;">
+        กลับไปก่อนหน้า
+      </a>
     </div>
   </body>
 </html>

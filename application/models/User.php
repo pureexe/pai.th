@@ -69,36 +69,45 @@ class User extends CI_Model {
       ));
     return $token;
   }
-  public function inviteTokenForNewUser()
+  public function inviteTokenForNewUser($note = '')
   {
     $this->load->config('subth');
     $token = $this->getUniqueInvite();
-    $this->db->insert('user',array(
+    $data = array(
       'type' => 'user',
       'invite_token' => $token,
       'shorten_quota' => $this->config->item('shorten_quota')
-    ));
+    );
+    if(!empty($note)){
+      $data['note'] = $note;
+    }
+    $this->db->insert('user',$data);
     $uid = intval($this->db->insert_id());
     return array(
       'id' => $uid,
       'invite_token' => $token
     );
   }
-  public function setPasswordInvite($invite_token,$password)
+  public function setPasswordInvite($invite_token,$password,$username)
   {
+
     $this->load->library('phpass');
     $hash = $this->phpass->hash($password);
+    $data = array(
+      'invite_token' => '',
+      'password' => $hash
+    );
+    if(!empty($username)){
+      $data['username'] = $username;
+    }
     $this->db
       ->where('invite_token',$invite_token)
-      ->update('user',array(
-        'invite_token' => '',
-        'password' => $hash
-      ));
+      ->update('user',$data);
     return empty($this->db->affected_rows());
   }
   public function getByInviteToken($invite_token){
     $query = $this->db
-      ->select('username')
+      ->select('id,username')
       ->from('user')
       ->where('invite_token',$invite_token);
     $data = $query->get()->result_array();
@@ -144,9 +153,12 @@ class User extends CI_Model {
     if(empty($users)){
       return null;
     }else{
-        $users[0]['id'] = intval($users[0]['id']);
-        $users[0]['shorten_quota'] = intval($users[0]['shorten_quota']);
-        return $users[0];
+      if(!empty($this->realUserId)){
+        $users[0]['override_by'] = $this->realUserId;
+      }
+      $users[0]['id'] = intval($users[0]['id']);
+      $users[0]['shorten_quota'] = intval($users[0]['shorten_quota']);
+      return $users[0];
     }
   }
   public function isExist($uid)

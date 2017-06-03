@@ -75,7 +75,8 @@ class AdminCtrl extends CI_Controller {
   public function invite($uid = 0)
   {
     if(empty($uid)){
-      $token = $this->User->inviteTokenForNewUser();
+      $note = $this->input->post("note");
+      $token = $this->User->inviteTokenForNewUser($note);
       return $this->Rest->render($token);
     }else if(!$this->User->isExist($uid)){
       return $this->Rest->error($this->lang->line('cant_issue_invite_token_for_non_exist_user'));
