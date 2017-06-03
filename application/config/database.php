@@ -98,9 +98,9 @@ if(getenv("USERNAME") == "pakkapon"){
 	$db['default'] = array(
 		'dsn'	=> '',
 		'hostname' => 'localhost',
-		'username' => 'wolverlo_subth',
-		'password' => 'mysweetmaiden',
-		'database' => 'wolverlo_subth',
+		'username' => 'xnccad_subth',
+		'password' => 'U7vlWtt2pZ',
+		'database' => 'xnccad_subth',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
