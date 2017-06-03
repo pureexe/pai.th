@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 02, 2017 at 03:06 PM
+-- Generation Time: Jun 03, 2017 at 01:11 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -45,11 +45,9 @@ CREATE TABLE `path` (
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
   `username` text NOT NULL,
-  `email` text NOT NULL,
   `password` text NOT NULL,
   `invite_token` varchar(32) NOT NULL,
   `type` varchar(16) NOT NULL,
-  `status` varchar(16) NOT NULL,
   `shorten_quota` int(11) NOT NULL DEFAULT '33'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -57,9 +55,9 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `email`, `password`, `invite_token`, `type`, `status`, `shorten_quota`) VALUES
-(1, 'pureexe', 'pure.gif@gmail.com', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'user', '', 33),
-(2, 'alice', 'alice@tafasu.com', '$2a$08$JKBTcpjq0itu4DpeUpp15utwrNwEfFV1xtNRmicIgD6kBkvZC5xW.', 'ญภสนนผฬม', 'admin', '', 33);
+INSERT INTO `user` (`id`, `username`, `password`, `invite_token`, `type`, `shorten_quota`) VALUES
+(1, 'pureexe', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', 33),
+(2, 'alice', '$2a$08$JKBTcpjq0itu4DpeUpp15utwrNwEfFV1xtNRmicIgD6kBkvZC5xW.', 'ญภสนนผฬม', 'admin', 33);
 
 --
 -- Indexes for dumped tables
