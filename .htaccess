@@ -1,5 +1,5 @@
 #Change CI_ENV from developemnt to production if it running on real server
-#SetEnv CI_ENV production
+SetEnv CI_ENV production
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -16,8 +16,8 @@
   RewriteRule ^จัดการ$ assets/html/user_manage.html [L]
   RewriteRule ^ผู้ดูแล$ assets/html/admin_manage.html [L]
   #API protection by referer (Set more referer for whitelist);
-  #RewriteCond %{HTTP:Referer} !^((.+)localhost(.+)|(.+)127.0.0.1(.+)|(.+)ซับ.ไทย(.+)|)$
-  #RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
+  RewriteCond %{HTTP:Referer} !^((.+)ซับ.ไทย(.+)|(.+)xn--c3c4a3d.xn--o3cw4h(.+)|(.+)localhost(.+)|(.+)127.0.0.1(.+))$
+  RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
   #Anti Neko-miku
   RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$
   RewriteRule .* https://assets.pureapp.in.th/neko508.html [R=302,L]
@@ -40,7 +40,7 @@
 #HTML static page cache
 <filesMatch "\.(html|htm)$">
   #Remove must-revalidate follow MDN docs // will undo if it take an error
-  #Header set Cache-Control "max-age=31536000, min-fresh=7200, public"
+  Header set Cache-Control "max-age=31536000, min-fresh=7200, public"
 </filesMatch>
 
 #RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
