@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 $config["shorten_quota"] = 33;
-$config["http_redirect_code"] = 301;
+$config["http_redirect_code"] = ENVIRONMENT !== 'production'?302:301;
 $config['shorten_whitelist'] = array(
   'tafasu.com',
   'www.tafasu.com',
