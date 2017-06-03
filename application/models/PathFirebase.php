@@ -25,7 +25,7 @@ class PathFirebase extends CI_Model {
     if(ENVIRONMENT !== 'production'){
       return;
     }
-    $short = str_replace("/","\\",$short);
+    $short = str_replace("/","|",$short);
     $this->database
         ->getReference('path/'.$short)
         ->set($full);
