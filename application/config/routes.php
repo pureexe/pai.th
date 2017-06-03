@@ -54,8 +54,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 * codeigniter not support UTF-8 routing. so we have no choice.
 **/
 $route['default_controller'] = 'welcome';
-$route[urlencode('จัดการ')] = 'SpaCtrl/user_manage';
-$route[urlencode('ผู้ดูแล')] = 'SpaCtrl/admin_manage';
 $route[urlencode('สมัคร')]['get'] = 'InviteCtrl/register';
 $route[urlencode('สมัคร')]['post'] = 'InviteCtrl/register_post';
 
