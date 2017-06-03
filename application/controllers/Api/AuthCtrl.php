@@ -21,8 +21,7 @@ class AuthCtrl extends CI_Controller {
     $query = $this->db
       ->select('id,password,type')
       ->from('user')
-      ->where('username',$username)
-      ->or_where('email',$username);
+      ->where('username',$username);
     $users = $query->get()->result_array();
     if(empty($users)){
       return $this->Rest->error($this->lang->line('username_or_password_incorrent'));
@@ -33,9 +32,7 @@ class AuthCtrl extends CI_Controller {
     $this->load->library('phpass');
     if($this->phpass->check($password,$users[0]['password'])){
       $this->load->library('session');
-      $this->session->set_userdata(array(
-  			'userid' => intval($users[0]['id'])
-  		));
+      $this->session->set_userdata('userid',intval($users[0]['id']));
   		session_write_close();
       return $this->Rest->render(array(
         'id' => intval($users[0]['id'])
