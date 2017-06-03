@@ -209,9 +209,9 @@
               </td>
             </tr>
           </tbody>
-          <tfoot style="background-color: #f5f5f5;">
+          <tfoot>
             <tr>
-              <td colspan="3" style="padding-top:15px;padding-bottom:15px;">
+              <td colspan="3" style="padding-top:15px;padding-bottom:15px;background-color: #f5f5f5;">
                 <div style="display: inline-block;">{{(page-1)*10 +1}} - {{page*10>totalItem?totalItem:page*10}} จาก {{totalItem}}</div>
                 <div style="display: inline-block;">
                   <button class="mdl-button mdl-js-button mdl-button--icon" :disabled="page <= 1 || isLoading"  v-on:click="prev"><i class="material-icons">chevron_left</i></button>
