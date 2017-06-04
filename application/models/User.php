@@ -191,6 +191,14 @@ class User extends CI_Model {
         'type' => $type
       ));
   }
+  public function setNote($uid,$note)
+  {
+    $this->db
+      ->where('id',$uid)
+      ->update('user',array(
+        'note' => $note
+      ));
+  }
   public function setQuota($uid,$cnt)
   {
     $this->db
