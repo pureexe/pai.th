@@ -137,4 +137,33 @@ class PathCtrl extends CI_Controller {
       return $this->Rest->error($this->lang->line('cant_remove_non_exist_path'));
     }
   }
+  public function search()
+  {
+    $q = $this->input->get('q');
+    $q = str_replace("http://","",$q);
+    $q = str_replace("https://","",$q);
+    $q = str_replace("ซับ.ไทย/","",$q);
+    if(empty($q)){
+      return $this->Rest->render(array(
+        "path" => array()
+      ));
+    }
+    $data = $this->Path->searchByShort($q);
+    if(!empty($data)){
+      return $this->Rest->render(array(
+        'path' => $data
+      ));
+    }
+    echo "HERE";
+    $data = $this->Path->searchByFull($q);
+    if(!empty($data)){
+      return $this->Rest->render(array(
+        'path' => $data
+      ));
+    }
+    echo "HERE";
+    return $this->Rest->render(array(
+      "path" => array()
+    ));
+  }
 }

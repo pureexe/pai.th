@@ -11,10 +11,14 @@ class Exporter extends CI_Controller {
   }
   public function firebase()
   {
-
+    if(!is_cli()){
+      throw new Exception("This method is only working on CLI mode", 1);
+    }
   }
   public function jekyll()
   {
-    
+    if(!is_cli()){
+      throw new Exception("This method is only working on CLI mode", 1);
+    }
   }
 }

@@ -72,6 +72,7 @@ $route['api/v1/auth']['post'] = 'Api/AuthCtrl/signin';
 $route['api/v1/auth']['delete'] = 'Api/AuthCtrl/logout';
 $route['api/v1/path']['get'] = 'Api/PathCtrl/all';
 $route['api/v1/path/count']['get'] = 'Api/PathCtrl/count';
+$route['api/v1/path/search']['get'] = 'Api/PathCtrl/search';
 $route['api/v1/path']['post'] = 'Api/PathCtrl/add';
 $route['api/v1/path/(:num)']['delete'] = 'Api/PathCtrl/remove/$1';
 
