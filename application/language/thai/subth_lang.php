@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $lang['username_and_password_required'] = 'จำเป็นต้องกรอกทั้งชื่อผู้ใช้และรหัสผ่าน';
 $lang['username_or_password_incorrent'] = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
 $lang['user_disable'] = "ผู้ใช้นี้ถูกระงับ";
+$lang['user_ban'] = "ผู้ใช้นี้ถูกแบน";
 $lang['logout_successfully'] = "ออกจากระบบเรียบร้อยแล้ว";
 $lang['duplicate'] = "ซ้ำ";
 $lang['only_admin_can_do'] = "มีเพียงแค่ผู้ดูแลระบบเท่านั้นที่สามารถกระทำการนี้ได้";
