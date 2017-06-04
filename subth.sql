@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2017 at 01:11 PM
+-- Generation Time: Jun 04, 2017 at 08:20 AM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -48,16 +48,16 @@ CREATE TABLE `user` (
   `password` text NOT NULL,
   `invite_token` varchar(32) NOT NULL,
   `type` varchar(16) NOT NULL,
-  `shorten_quota` int(11) NOT NULL DEFAULT '33'
+  `shorten_quota` int(11) NOT NULL DEFAULT '33',
+  `note` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `password`, `invite_token`, `type`, `shorten_quota`) VALUES
-(1, 'pureexe', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', 33),
-(2, 'alice', '$2a$08$JKBTcpjq0itu4DpeUpp15utwrNwEfFV1xtNRmicIgD6kBkvZC5xW.', 'ญภสนนผฬม', 'admin', 33);
+INSERT INTO `user` (`id`, `username`, `password`, `invite_token`, `type`, `shorten_quota`, `note`) VALUES
+(1, 'pureexe', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', 33, 'pure\'s app');
 
 --
 -- Indexes for dumped tables
@@ -88,7 +88,7 @@ ALTER TABLE `path`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
