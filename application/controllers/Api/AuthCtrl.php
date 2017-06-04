@@ -26,7 +26,10 @@ class AuthCtrl extends CI_Controller {
     if(empty($users)){
       return $this->Rest->error($this->lang->line('username_or_password_incorrent'));
     }
-    if($users[0]['type'] == 'ban' || $users[0]['type'] == 'disable'){
+    if($users[0]['type'] == 'ban'){
+      return $this->Rest->error($this->lang->line('user_ban').": ".$users[0]['ban_note']);
+    }
+    if($users[0]['type'] == 'disable'){
       return $this->Rest->error($this->lang->line('user_disable').": ".$users[0]['ban_note']);
     }
     $this->load->library('phpass');
