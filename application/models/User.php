@@ -241,7 +241,7 @@ class User extends CI_Model {
       ->from('user')
       ->where('id',$uid)
       ->get()
-      ->result_array()['type'];
+      ->result_array()[0]['type'];
     if($old_type == 'ban' && $type != 'ban'){
       $this->db
         ->where('owner',$uid)
