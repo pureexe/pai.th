@@ -1,6 +1,11 @@
 #Change CI_ENV from developemnt to production if it running on real server
 SetEnv CI_ENV production
 
+<Limit GET POST DELETE PUT>
+  Order deny,allow
+  Allow from all
+</Limit>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # RewriteRule .* maintenance.html [NC]
@@ -18,8 +23,8 @@ SetEnv CI_ENV production
   RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$
   RewriteRule .* https://assets.pureapp.in.th/neko508.html [R=302,L]
   #API protection by referer (Set more referer for whitelist);
-  #RewriteCond %{HTTP:Referer} !^(?:|.+):\/\/(localhost|xn--c3c4a3d.xn--o3cw4h)\/(?:|.+)$
-  #RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
+  RewriteCond %{HTTP:Referer} !^(?:|.+)\:\/\/(localhost|xn--c3c4a3d\.xn--o3cw4h)\/(?:|.+)$
+  RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
   #Rewrite Homepage use static
   RewriteRule ^$ assets/html/main.html
   #Codeigniter Path Redirecter
