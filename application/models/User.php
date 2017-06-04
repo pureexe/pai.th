@@ -12,19 +12,11 @@ class User extends CI_Model {
     parent::__construct();
     $this->load->database();
   }
-  public function isAdmin()
-  {
-    $user = $this->get();
-    if(empty($user)){
-      return false;
-    }else{
-      return $user['type'] == 'admin';
-    }
-  }
-  public function isSignIn()
-  {
-    return !empty($this->getId());
-  }
+  /**
+  * สำหรับสร้างรหัสบัตรเชิญที่ไม่ซ้ำกับในฐานข้อมูล
+  * @return String บัตรเชิญที่ไม่ซ้ำกันในฐานข้อมูล
+  * @method getUniqueInvite
+  **/
   public function getUniqueInvite()
   {
     $this->load->helper('thaistring');
@@ -39,6 +31,12 @@ class User extends CI_Model {
     }
     return $token;
   }
+  /**
+  * สำหรับทำการสร้างบัตรเชิญอีกครั้งของบัญชีที่เคยใช้บัตรเชิญไปแล้ว (กรณีลืมรหัสผ่าน)
+  * @param int รหัสผู้ใข้
+  * @return String รหัสบัตรเชิญ
+  * @method generateInviteToken
+  **/
   public function generateInviteToken($userId)
   {
     $token = $this->getUniqueInvite();
@@ -49,6 +47,11 @@ class User extends CI_Model {
       ));
     return $token;
   }
+  /**
+  * สำหรับทำยกเลิกรหัสบัตรเชิญที่ไม่ใช้ (จะไม่ลบบัญชีทิ้ง)
+  * @param int รหัสผู้ใข้
+  * @method generateInviteToken
+  **/
   public function removeInviteToken($uid)
   {
     $this->db
@@ -57,6 +60,11 @@ class User extends CI_Model {
         'invite_token' => ''
       ));
   }
+  /**
+  * สร้างบัญชีใหม่พร้อมบัตรเชิญมาให้ใช้บัญชีดังกล่าว
+  * @param String โน้ตสำหรับกำกับข้อมูล
+  * @method generateInviteToken
+  **/
   public function inviteTokenForNewUser($note = '')
   {
     $this->load->config('subth');
@@ -76,9 +84,16 @@ class User extends CI_Model {
       'invite_token' => $token
     );
   }
-  public function setPasswordInvite($invite_token,$password,$username)
+  /**
+  * อัปเดตข้อมูลผู้ใช้เมื่อมีการใช้บัตรเชิญ
+  * หมายเหตุ: หากไม่ส่งชื่อผู้ใช้มาจะเป็นการเปลี่ยนรหัสผ่าน
+  * แต่หากส่งมาจะเป็นการเขียนทับข้อมูลในบัญชีสำหรับผู้ใช้ใหม่
+  * @param String บัตรเชิญ String รหัสผ่านที่ไม่เข้ารหัส String ชื่อผู้ใช้
+  * @return boolean จริงเมื่อมีการอัปเดตข้อมูล เท็จเมื่อบัตรเชิญไม่ถูกต้อง
+  * @method setPasswordInvite
+  **/
+  public function setPasswordInvite($invite_token,$password,$username = '')
   {
-
     $this->load->library('phpass');
     $hash = $this->phpass->hash($password);
     $data = array(
@@ -93,6 +108,12 @@ class User extends CI_Model {
       ->update('user',$data);
     return empty($this->db->affected_rows());
   }
+  /**
+  * สำหรับค้นหาชื่อผู้ใช้และรหัสผู้ใช้ด้วยบัตiเชิญ
+  * @param String บัตรเชิญ
+  * @return null|assoc_array ประกอบด้วย id และ username
+  * @method getByInviteToken
+  **/
   public function getByInviteToken($invite_token){
     $query = $this->db
       ->select('id,username')
@@ -101,11 +122,21 @@ class User extends CI_Model {
     $data = $query->get()->result_array();
     return empty($data)?null:$data[0];
   }
+  /**
+  * สำหรับดึงข้อมูลผู้ใช้จริง กรณีมีการสลับบัญชี (Override)
+  * @return assoc_array ข้อมูลของผู้ใช้ ตามตาราง user
+  * @method getReal
+  **/
   public function getReal()
   {
     $uid = $this->getRealId();
     return $this->get($uid);
   }
+  /**
+  * ดึงรหัสประจำตัวของผู้ใช้จริง ผ่าน session
+  * @return int รหัสประจำตัวผู้ใช้จริง
+  * @method getReal
+  **/
   public function getRealId(){
     if(empty($this->realUserId)){
       $this->load->library('session');
@@ -176,6 +207,14 @@ class User extends CI_Model {
       ->where('id',$uid)
       ->update('user',array(
         'note' => $note
+      ));
+  }
+  public function setBanNote($uid,$note)
+  {
+    $this->db
+      ->where('id',$uid)
+      ->update('user',array(
+        'ban_note' => $note
       ));
   }
   public function setQuota($uid,$cnt)
