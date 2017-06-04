@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2017 at 08:20 AM
+-- Generation Time: Jun 04, 2017 at 02:36 PM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -33,6 +33,7 @@ CREATE TABLE `path` (
   `owner` int(11) NOT NULL,
   `short` varchar(2048) NOT NULL,
   `full` varchar(2048) NOT NULL,
+  `status` varchar(10) NOT NULL,
   `updated_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -49,15 +50,16 @@ CREATE TABLE `user` (
   `invite_token` varchar(32) NOT NULL,
   `type` varchar(16) NOT NULL,
   `shorten_quota` int(11) NOT NULL DEFAULT '33',
-  `note` text NOT NULL
+  `note` text NOT NULL,
+  `ban_note` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `password`, `invite_token`, `type`, `shorten_quota`, `note`) VALUES
-(1, 'pureexe', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', 33, 'pure\'s app');
+INSERT INTO `user` (`id`, `username`, `password`, `invite_token`, `type`, `shorten_quota`, `note`, `ban_note`) VALUES
+(1, 'pureexe', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', 33, 'pure\'s app', '');
 
 --
 -- Indexes for dumped tables
