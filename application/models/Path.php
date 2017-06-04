@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
-* @class: User
+* @class: Path
 **/
 class Path extends CI_Model {
   public function __construct()
@@ -10,6 +10,12 @@ class Path extends CI_Model {
     parent::__construct();
     $this->load->database();
   }
+  /**
+  * สำหรับดึง URL เต็มจากพาธของลิงค์ย่อ
+  * @param String ลิงค์ย่อ
+  * @return null|String ลิ้งค์เต็มที่มี
+  * @method getFull
+  **/
   public function getFull($path)
   {
     // if have performace problem then we should implement Cache
@@ -23,6 +29,7 @@ class Path extends CI_Model {
     if(empty($data)){
       return null;
     }
+    //ถ้าหากโดนแบนให้ระงับลิ้งค์ทันที
     if($data[0]['status'] == 'ban'){
       return 'https://ซับ.ไทย/ระงับ';
     }else{
@@ -30,8 +37,10 @@ class Path extends CI_Model {
     }
   }
   /**
-  * use for get user list;
-  * @method list
+  * ดึงลิงก์ที่ผู้ใช้มีมาแสดงให้ผู้ใช้ดู
+  * @param int รหัสผู้ใช้, int หน้า,int จำนวนต่อหน้า
+  * @return assoc_array ข้อมูลของลิงค์นั้นๆ
+  * @method all
   **/
   public function all($uid,$page = 1,$limit = 10)
   {
@@ -52,6 +61,11 @@ class Path extends CI_Model {
     }
     return $output;
   }
+  /**
+  * สำหรับย่อลิ้งค์ หากยังไม่มีตัวอักษรย่อ จะทำการสุ่มภาษาไทยมา 5 ตัวอักษร
+  * @param int รหัสผู้ใช้,String URLเต็ม,String เส้นทางที่ย่อแล้ว (ถ้ามี)
+  * @method assoc_array รหัสของพาธที่ย่อและพาธที่ย่อแล้ว
+  **/
   public function shorten($uid,$fullPath,$customShortestPath)
   {
     $this->load->helper("thaistring");
@@ -63,7 +77,7 @@ class Path extends CI_Model {
       }
     }else{
       if($this->isExist($customShortestPath)){
-        throw new Exception("Path: ".$customShortestPath." is already exist.", 1);
+        throw new Exception("เส้นทาง ".$customShortestPath." ถูกใช้ไปแล้ว", 1);
       }else{
         $shortPath = $customShortestPath;
       }
@@ -74,6 +88,12 @@ class Path extends CI_Model {
       'path' => $shortPath
     );
   }
+  /**
+  * ดึงข้อมูลรหัสและพาธย่อจากพารธเต็ฒ
+  * @param String URLเต็ม, int รหัสผู้ใช้
+  * @return assoc_array รหัสของพาธและพาธย่อ
+  * @method getShortInfoByFull
+  **/
   public function getShortInfoByFull($full,$uid)
   {
     $query = $this->db
@@ -89,6 +109,11 @@ class Path extends CI_Model {
       return $result[0];
     }
   }
+  /**
+  * อัปเดตเวลาของพาธย่อ (กรณีใส่พาธเดิมซ้ำ)
+  * @param String พาธย่อ, int รหัสผู้ใช้ที่เป็นเจ้าขอ
+  * @method updateTime
+  **/
   public function updateTime($short,$uid)
   {
     $query = $this->db
@@ -98,6 +123,12 @@ class Path extends CI_Model {
         'updated_time' => date('Y-m-d H:i:s')
       ));
   }
+  /**
+  * ตรวจสอบว่าลิ้งค์สั้นดังกล่าวมีอยู่ในระบบแล้วหรือไม่
+  * @param String พาธสั้น
+  * @return boolean ถ้าเจอตอบว่าจริง
+  * @method isExist
+  **/
   public function isExist($short)
   {
     $cnt = $this->db
@@ -105,6 +136,12 @@ class Path extends CI_Model {
         ->count_all_results('path');
     return $cnt>0;
   }
+  /**
+  * สำหรับเขียน ลิ้งค์สั้นและลิ้งค์ยาวคู่กันไว้ในฐานข้อมูล
+  * หมายเหตุ: เมธอดนี้จะส่งขึ้น Firebase ด้วย
+  * @param String ลิ้งเต็ม,String พาธย่อ, int รหัสผู้ใช้
+  * @return int ไอดีของพาธ
+  **/
   public function point($fullUrl,$shortUrl,$uid)
   {
     $this->load->model('PathFirebase');
@@ -116,6 +153,11 @@ class Path extends CI_Model {
     ));
     return intval($this->db->insert_id());
   }
+  /**
+  * นับพาธทั้งหมดที่ผู้ใช้ถืออยู่
+  * @param int รหัสผู้ใช้
+  * @return int จำนวนพาธที่มี
+  **/
   public function count($uid)
   {
     if(empty($uid)){
@@ -126,6 +168,12 @@ class Path extends CI_Model {
           ->count_all_results('path');
     }
   }
+  /**
+  * ลบพาธ
+  * หมายเหตุ: วิ่งไปลบบน firebase ด้วย
+  * @param int รหัสของพาธ
+  * @return boolean เป็นจริงถ้าลบสำเร็จ
+  **/
   public function remove($pathId)
   {
     if(ENVIRONMENT === 'production'){
@@ -144,6 +192,12 @@ class Path extends CI_Model {
       ->delete('path');
     return $this->db->affected_rows() > 0;
   }
+  /**
+  * ลบพาธโดยชื่อผู้ใช้
+  * หมายเหตุ: เนื่องจากเป็นการลบพาธปริมาณมากจึงไม่ลบบน Firebase
+  * @param int รหัสของพาธ
+  * @method removeByOwner
+  **/
   public function removeByOwner($uid)
   {
     $this->db
