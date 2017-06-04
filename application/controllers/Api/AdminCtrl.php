@@ -26,6 +26,7 @@ class AdminCtrl extends CI_Controller {
       return $this->Rest->error($this->lang->line("cant_remove_non_exist_user"));
     }
     $this->User->remove($uid);
+    $this->Path->removeByOwner($uid);
     $this->Rest->render(array(
         "id" => intval($uid)
     ));

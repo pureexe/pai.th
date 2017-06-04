@@ -56,7 +56,7 @@ class PathCtrl extends CI_Controller {
     $this->load->driver('cache',array('adapter' => 'apc','backup' => 'file'));
     $quota_use = $this->cache->get('quota_shorten_'.$this->user['username']);
     $quota_use = empty($quota_use)?0:$quota_use;
-    if($this->user['type'] != 'admin' && $quota_use > $this->user['shorten_quota']){
+    if($this->user['type'] != 'admin' && $quota_use >= $this->user['shorten_quota']){
       return $this->Rest->error("Your quota is running out. Please contact admin for increase.",1);
     }
     $timeToMidNight = strtotime('tomorrow') - time();

@@ -195,6 +195,25 @@ class User extends CI_Model {
   }
   public function setType($uid,$type)
   {
+    $old_type = $this->db
+      ->select('type')
+      ->from('user')
+      ->where('id',$uid)
+      ->get()
+      ->result_array()['type'];
+    if($old_type == 'ban' && $type != 'ban'){
+      $this->db
+        ->where('owner',$uid)
+        ->update('path',array(
+          'status' => ''
+        ));
+    }else if($old_type != 'ban' && $type == 'ban'){
+      $this->db
+        ->where('owner',$uid)
+        ->update('path',array(
+          'status' => 'ban'
+        ));
+    }
     $this->db
       ->where('id',$uid)
       ->update('user',array(
@@ -229,7 +248,7 @@ class User extends CI_Model {
   {
     $page = ($page-1)*$limit;
     $query = $this->db
-      ->select('id,username,type,note,invite_token,shorten_quota')
+      ->select('id,username,type,note,invite_token,shorten_quota,ban_note')
       ->from('user')
       ->order_by('id','DESC')
       ->limit($limit, $page);

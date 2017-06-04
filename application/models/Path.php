@@ -16,22 +16,18 @@ class Path extends CI_Model {
     // but we have to less inode so i will skip cache and believe
     // in sql server performance
     $query = $this->db
-      ->select('full,owner')
+      ->select('full,status')
       ->from('path')
       ->where('path.short',$path);
     $data = $query->get()->result_array();
     if(empty($data)){
       return null;
     }
-    $owner = $this->db
-      ->select('type')
-      ->from('user')
-      ->where('id',$data[0]['owner'])
-      ->get()->result_array();
-    if(!empty($owner) && $owner[0]['type'] == 'ban'){
-      return "https://ซับ.ไทย/ระงับ";
+    if($data[0]['status'] == 'ban'){
+      return 'https://ซับ.ไทย/ระงับ';
+    }else{
+      return $data[0]['full'];
     }
-    return $data[0]['full'];
   }
   /**
   * use for get user list;
@@ -147,5 +143,11 @@ class Path extends CI_Model {
       ->where('id',$pathId)
       ->delete('path');
     return $this->db->affected_rows() > 0;
+  }
+  public function removeByOwner($uid)
+  {
+    $this->db
+      ->where('owner', $uid)
+      ->delete('path');
   }
 }
