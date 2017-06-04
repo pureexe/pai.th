@@ -20,28 +20,6 @@ class AdminCtrl extends CI_Controller {
       exit();
     }
 	}
-  public function create()
-  {
-    $this->form_validation
-      ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]');
-    if ($this->form_validation->run() == FALSE){
-      return $this->Rest->error(validation_errors(),1);
-    }
-    $username = $this->input->post("username");
-    $email = $this->input->post("email");
-    $password = $this->input->post("password");
-    //create random string if password not set
-    if(empty($password)){
-      $this->load->helper('string');
-      $password = random_string('alnum',8);
-    }
-    $id = $this->User->create($username,$email,$password);
-    $token = $this->User->generateInviteToken($id);
-    $this->Rest->render(array(
-      "id" => $id,
-      "invite_token" => $token
-    ));
-  }
   public function remove($uid)
   {
     if(!$this->User->isExist($uid)){
