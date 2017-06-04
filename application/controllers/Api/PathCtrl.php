@@ -19,7 +19,7 @@ class PathCtrl extends CI_Controller {
     $this->lang->load("subth","thai");
     $this->user = $this->User->get();
     if(empty($this->user)){
-      $this->Rest->error($this->lang->line('your_account_is_suppend'),401);
+      $this->Rest->error($this->lang->line('signin_required'),401);
       $this->output->_display();
       exit();
     }
