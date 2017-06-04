@@ -8,7 +8,8 @@ var app = new Vue({
     mismatch: false,
     password: "",
     confirm_password: "",
-    confirm_password_text: "ยืนยันรหัสผ่านอีกครั้ง"
+    confirm_password_text: "ยืนยันรหัสผ่านอีกครั้ง",
+    acceptTOS: false,
   },
   methods: {
     onSubmit: function(event){
