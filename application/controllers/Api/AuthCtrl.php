@@ -47,6 +47,7 @@ class AuthCtrl extends CI_Controller {
     $this->load->library('session');
     $this->lang->load('subth', 'thai');
     $this->session->unset_userdata('userid');
+    $this->session->unset_userdata('userid_override');
     session_write_close();
     return $this->Rest->render(array(
       'message' => $this->lang->line('logout_successfully')
