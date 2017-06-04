@@ -188,10 +188,26 @@
                 <button type="button" class="mdl-button close" v-on:click.prevent="closeRemoveUserModal">ยกเลิก</button>
               </div>
             </dialog>
+            <dialog v-bind:id="'ban_note_dialog_'+user.id" class="mdl-dialog">
+              <h4 class="mdl-dialog__title" style="font-size:1.8rem;text-align:left">ระงับการเข้าระบบ</h4>
+              <div class="mdl-dialog__content">
+                <form v-on:submit.prevent="changeUserQuota">
+                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text"  v-bind:id="'ban_note_'+user.id" v-model="ban_note" autocomplete="off">
+                    <label class="mdl-textfield__label" v-bind:for="'ban_note_'+user.id">คำอธิบายการระงับเข้าระบบ</label>
+                  </div>
+                  <p class="red">{{ban_note_error}}</p>
+                </form>
+              </div>
+              <div class="mdl-dialog__actions">
+                <button type="button" class="mdl-button" v-on:click.prevent="doUpdateBanNote">ตั้งค่า</button>
+                <button type="button" class="mdl-button close" v-on:click.prevent="closeBanNoteModal">ยกเลิก</button>
+              </div>
+            </dialog>
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" v-bind:for="'role-change-'+user.id">
             <li class="mdl-menu__item" v-on:click.prevent="changeUserType('user')">ผู้ใช้</li>
-            <li class="mdl-menu__item" v-on:click.prevent="changeUserType('ban')">แบน</li>
-            <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="changeUserType('disable')">ระงับ</li>
+            <li class="mdl-menu__item" v-on:click.prevent="triggerBanNoteModal('ban')">แบน</li>
+            <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="triggerBanNoteModal('disable')">ระงับ</li>
             <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="changeUserType('admin')">ผู้ดูแลระบบ</li>
             <li class="mdl-menu__item" v-on:click.prevent="triggerRemoveUserModal">ลบ</li>
           </ul>
@@ -404,7 +420,10 @@
           waitingForAccountOverride : false,
           note: "",
           note_error: "",
-          removeInviteConfirm: false
+          removeInviteConfirm: false,
+          ban_note: "",
+          ban_note_error: "",
+          ban_note_type: ""
         }
       },
       props: ['user'],
@@ -538,13 +557,38 @@
               console.error(e);
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
-          })
+          });
         },
         closeUserQuotaModal: function(){
           document.querySelector('#shorten_quota_dialog_'+this.user.id).close();
         },
         triggerUserQuota: function(){
           document.querySelector('#shorten_quota_dialog_'+this.user.id).showModal();
+        },
+        triggerBanNoteModal: function(type){
+          this.ban_note_type = type;
+          document.querySelector('#ban_note_dialog_'+this.user.id).showModal();
+        },
+        closeBanNoteModal: function(){
+          document.querySelector('#ban_note_dialog_'+this.user.id).close();
+        },
+        doUpdateBanNote: function(){
+          if(this.ban_note == ''){
+            return this.ban_note_error = 'ไม่สามารถเว้นว่างได้';
+          }
+          this.ban_note_error = '';
+          this.$http.post('user/'+this.user.id,{'ban_note':this.ban_note}).then(function(response){
+            //Do noting
+          },function(error){
+            try{
+              window.VueNotify.$emit('snackbar',error.body.error.message);
+            }catch(e){
+              console.error(e);
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            }
+          });
+          document.querySelector('#ban_note_dialog_'+this.user.id).close();
+          this.changeUserType(this.ban_note_type);
         },
         changeUserNote: function(){
           var self = this;

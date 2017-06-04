@@ -165,7 +165,7 @@ class User extends CI_Model {
       $uid = $this->getId();
     }
     $query = $query = $this->db
-      ->select('id,username,type,shorten_quota,note')
+      ->select('id,username,type,shorten_quota,note,ban_note')
       ->from('user')
       ->where('id',$uid);
     $users = $query->get()->result_array();
@@ -174,6 +174,11 @@ class User extends CI_Model {
     }else{
       if(!empty($this->realUserId)){
         $users[0]['override_by'] = $this->realUserId;
+      }else{
+        unset($users[0]['note']);
+      }
+      if(empty($users[0]['ban_note'])){
+        unset($users[0]['ban_note']);
       }
       $users[0]['id'] = intval($users[0]['id']);
       $users[0]['shorten_quota'] = intval($users[0]['shorten_quota']);
@@ -214,11 +219,15 @@ class User extends CI_Model {
           'status' => 'ban'
         ));
     }
+    $data = array(
+      'type' => $type
+    );
+    if($type != 'ban' && $type != 'disable'){
+      $data['ban_note'] = '';
+    }
     $this->db
       ->where('id',$uid)
-      ->update('user',array(
-        'type' => $type
-      ));
+      ->update('user',$data);
   }
   public function setNote($uid,$note)
   {

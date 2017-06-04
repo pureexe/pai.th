@@ -19,7 +19,7 @@ class AuthCtrl extends CI_Controller {
       return $this->Rest->error($this->lang->line('username_and_password_required'));
     }
     $query = $this->db
-      ->select('id,password,type')
+      ->select('id,password,type,ban_note')
       ->from('user')
       ->where('username',$username);
     $users = $query->get()->result_array();
@@ -27,7 +27,7 @@ class AuthCtrl extends CI_Controller {
       return $this->Rest->error($this->lang->line('username_or_password_incorrent'));
     }
     if($users[0]['type'] == 'ban' || $users[0]['type'] == 'disable'){
-      return $this->Rest->error($this->lang->line('user_disable'));
+      return $this->Rest->error($this->lang->line('user_disable').": ".$users[0]['ban_note']);
     }
     $this->load->library('phpass');
     if($this->phpass->check($password,$users[0]['password'])){
