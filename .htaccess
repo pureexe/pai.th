@@ -1,11 +1,9 @@
 #Change CI_ENV from developemnt to production if it running on real server
-#SetEnv CI_ENV production
+SetEnv CI_ENV production
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # RewriteRule .* maintenance.html [NC]
-  # Original Cache Path ^/?$
-  # RewriteRule !^(board)($|/) https://www.facebook.com/tafasu/posts/1881886878714673 [L,R=302]
   # !IMPORTANT! Set your RewriteBase here and don't forget trailing and leading
   #  slashes.
   # If your page resides at
@@ -16,12 +14,12 @@
   RewriteRule ^จัดการ$ assets/html/user_manage.html [L]
   RewriteRule ^ผู้ดูแล$ assets/html/admin_manage.html [L]
   RewriteRule ^ข้อตกลง$ assets/html/term.html [L]
-  #API protection by referer (Set more referer for whitelist);
-  #RewriteCond %{HTTP:Referer} !^((.+)ซับ.ไทย(.+)|(.+)xn--c3c4a3d.xn--o3cw4h(.+)|(.+)localhost(.+)|(.+)127.0.0.1(.+))$
-  #RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
   #Anti Neko-miku
   RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$
   RewriteRule .* https://assets.pureapp.in.th/neko508.html [R=302,L]
+  #API protection by referer (Set more referer for whitelist);
+  #RewriteCond %{HTTP:Referer} !^(?:|.+):\/\/(localhost|xn--c3c4a3d.xn--o3cw4h)\/(?:|.+)$
+  #RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
   #Rewrite Homepage use static
   RewriteRule ^$ assets/html/main.html
   #Codeigniter Path Redirecter
@@ -34,16 +32,13 @@
   # If we don't have mod_rewrite installed, all 404's
   # can be sent to index.php, and everything works as normal.
   # Submitted by: ElliotHaughin
-
   ErrorDocument 404 /index.php
 </IfModule>
+
+ErrorDocument 508 /500.shtml
 
 #HTML static page cache
 <filesMatch "\.(html|htm)$">
   #Remove must-revalidate follow MDN docs // will undo if it take an error
-  # Header set Cache-Control "max-age=31536000, min-fresh=7200, public"
+  Header set Cache-Control "max-age=31536000, min-fresh=7200, public"
 </filesMatch>
-
-#RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
-#RewriteCond %{REQUEST_URI} !^/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
-#RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
