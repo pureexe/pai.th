@@ -40,6 +40,10 @@ class OverrideCtrl extends CI_Controller {
   public function create()
   {
     $uid = $this->input->post("uid");
+    if($this->userid == $uid){
+      session_write_close();
+      return $this->Rest->error($this->lang->line('cant_override_yourself'));
+    }
     $test = $this->db
       ->select('id')
       ->from('user')
@@ -50,7 +54,7 @@ class OverrideCtrl extends CI_Controller {
       session_write_close();
       return $this->Rest->error($this->lang->line('cant_modify_non_exist_user'));
     }else{
-      $this->session->set_userdata('userid_override',intval($uid));      
+      $this->session->set_userdata('userid_override',intval($uid));
       $this->Rest->render(array(
         'id' => intval($uid)
       ));

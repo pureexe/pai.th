@@ -53,6 +53,7 @@
         <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
         <div class="mdl-layout-spacer"></div>
         <div v-show="user.username != ''">
+          <a href='/จัดการ' style="margin-right: 15px;color:#fff">จัดการ</a>
           <span style="margin-right: 15px;color:#fff">{{user.username}}</span>
           <a href='#' v-on:click.prevent="logout" style="color:#fff">ออกจากระบบ</a>
         </div>
@@ -143,9 +144,10 @@
     <tr>
       <td>{{user.id}}</td>
       <td class="mdl-data-table__cell--non-numeric">
-        <button class="mdl-button mdl-js-button" v-if="user.username" style="text-transform: none;" v-on:click.prevent="overrideAccount">
+        <button class="mdl-button mdl-js-button" v-if="user.username && !waitingForAccountOverride" style="text-transform: none;" v-on:click.prevent="overrideAccount">
           {{user.username}}
         </button>
+        <div class="mdl-spinner mdl-js-spinner is-active" v-if="waitingForAccountOverride"></div>
       </td>
       <td class="mdl-data-table__cell--non-numeric">{{user.note}}</td>
       <td class="mdl-data-table__cell--non-numeric">
@@ -175,7 +177,7 @@
         <button class="mdl-button mdl-js-button"  v-on:click.prevent="copyInvite">
           {{user.invite_token}}
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeInvite">
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeInvite" style="margin-top: -2px;color: #777;">
           <i class="icon material-icons">delete</i>
         </button>
         </div>
@@ -363,6 +365,7 @@
           creatingInviteToken: false,
           shorten_quota: 33,
           shorten_quota_error: "",
+          waitingForAccountOverride : false,
         }
       },
       props: ['user'],
@@ -429,7 +432,6 @@
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
           });
-          console.log(this.user.username);
           if(this.user.username === undefined || this.user.username==""){
             window.VueNotify.$emit('removeById',this.user.id);
           }else{
@@ -437,7 +439,29 @@
           }
         },
         overrideAccount: function(){
-            console.log("override account implement");
+            var self = this;
+            self.waitingForAccountOverride = true;
+            self.$nextTick(function () {
+              window.componentHandler.upgradeDom();
+            });
+            self.$http.post('user/override',{uid:self.user.id}).then(function(){
+              self.waitingForAccountOverride = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              });
+              window.location.replace('/จัดการ');
+            },function(error){
+              try{
+                window.VueNotify.$emit('snackbar',error.body.error.message);
+                self.waitingForAccountOverride = false;
+                self.$nextTick(function () {
+                  window.componentHandler.upgradeDom();
+                });
+              }catch(e){
+                console.error(error.bodyText);
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+              }
+            });
         },
         changeUserType: function(type){
           this.user.type = type;
@@ -558,7 +582,7 @@
       mounted: function(){
         var self = this;
         window.VueNotify.$on('getUser',function(){
-          self.$http.get('user').then(function(response){
+          self.$http.get('user?real=true').then(function(response){
             if(response.body.type == 'admin'){
               window.VueNotify.$emit('onAuthenticate',response.body);
             }else{

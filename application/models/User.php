@@ -155,7 +155,7 @@ class User extends CI_Model {
       $uid = $this->getId();
     }
     $query = $query = $this->db
-      ->select('id,username,type,shorten_quota')
+      ->select('id,username,type,shorten_quota,note')
       ->from('user')
       ->where('id',$uid);
     $users = $query->get()->result_array();

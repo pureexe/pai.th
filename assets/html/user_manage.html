@@ -104,11 +104,17 @@
       <header class="" style="box-shadow:none;">
         <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;background-color:#fff">
           <span class="mdl-layout-title" style="color:#333;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
-          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-layout-spacer" style="text-align:center">
+            <div v-if="user.override_by">
+              คุณกำลังเข้าใช้งานในฐานะของ {{user.note}}
+              <a href="#" v-on:click.prevent="logoutFromOverride" v-if="!loggingOutFromOverride">(ยกเลิก)</a>
+              <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" v-if="loggingOutFromOverride"></div>
+            </div>
+          </div>
           <div v-show="user.username != ''">
             <a style="margin-right: 15px;" href='/ผู้ดูแล' v-show="user.type == 'admin'">ผู้ดูแล</a>
             <span style="margin-right: 15px;">{{user.username}}</span>
-            <a href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
+            <a v-if="user.override_by === undefined" href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
           </div>
         </div>
       </header>
@@ -210,10 +216,15 @@
               </td>
               <td class="mdl-data-table__cell--non-numeric">
                 ซับ.ไทย/{{path.short}}
-                <button v-bind:id="'tooltip-copy-'+index" class="copy-button mdl-button mdl-js-button mdl-button--icon"><i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i></button>
+                <button v-bind:id="'tooltip-copy-'+index" class="copy-button mdl-button mdl-js-button mdl-button--icon">
+                  <i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i>
+                </button>
                 <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+index" >
                   คัดลอกลิงก์ย่อ
                 </div>
+                <button class="copy-button mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeLinkById(path.id)">
+                  <i class="icon material-icons">delete</i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -322,7 +333,8 @@
               email:"",
               type:"",
               shorten_quota:0
-            }
+            },
+            loggingOutFromOverride:false,
           }
         },
         mounted:function(){
@@ -341,6 +353,26 @@
           });
         },
         methods: {
+          logoutFromOverride: function(){
+            var self = this;
+            self.loggingOutFromOverride = true;
+            self.$nextTick(function () {
+              window.componentHandler.upgradeDom();
+            });
+            self.$http.delete('user/override').then(function(){
+              self.loggingOutFromOverride = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              });
+              window.location.replace('/ผู้ดูแล');
+            },function(error){
+              try{
+                window.VueNotify.$emit('snackbar',error.body.error.message);
+              }catch(e){
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+              }
+            });
+          },
           logout: function(){
             this.$http.delete('auth').then(function(){
               window.VueNotify.$emit('onAuthenticate',null);
@@ -475,6 +507,12 @@
               console.error(error.body);
               self.isLoading = false;
             });
+          },
+          removeLinkById: function(id){
+            var pos = this.pathList.map(function(e) { return e.id; }).indexOf(id);
+            if(pos != -1){
+              this.pathList.splice(pos,1);
+            }
           },
           copyToClipBoard: function(shortLink){
             var copied = window.copyTextToClipboard("https://ซับ.ไทย/"+shortLink);

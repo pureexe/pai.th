@@ -18,3 +18,4 @@ $lang['site_is_require_invite_card_for_registation'] = 'เว็บไชต์
 $lang['invalid_invite_card'] = 'บัตรเชิญของคุณไม่ถูกต้อง';
 $lang['you_dont_have_invite_card'] = 'คุณไม่ได้ใช้บัตรเชิญในการสมัครสมาชิก';
 $lang['cant_change_username'] = 'ไม่สามารถเปลี่ยนชื่อผู้ใช้ได้';
+$lang['cant_override_yourself'] = 'ไม่สามารถเข้าสู่ระบบเป็นตัวเองได้';
