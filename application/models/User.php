@@ -134,6 +134,7 @@ class User extends CI_Model {
   }
   /**
   * ดึงรหัสประจำตัวของผู้ใช้จริง ผ่าน session
+  * หมายเหตุ: ควรปิด session ทันที เพื่อป้องกันการ blocking ตามที่ CI เตือนไว้
   * @return int รหัสประจำตัวผู้ใช้จริง
   * @method getReal
   **/
@@ -145,6 +146,13 @@ class User extends CI_Model {
     }
     return $this->realUserId;
   }
+  /**
+  * ดึงรหัสประจำตัวของผู้ใช้ หากมีการ override อยู่จาก session
+  * ให้ตอบกลับเป็นเลขจาก session แทน
+  * หมายเหตุ: ควรปิด session ทันที เพื่อป้องกันการ blocking ตามที่ CI เตือนไว้
+  * @return int รหัสประจำตัวผู้ใช้
+  * @method getId
+  **/
   public function getId()
   {
     if(empty($this->userid)){
@@ -159,6 +167,14 @@ class User extends CI_Model {
     }
     return $this->userid;
   }
+  /**
+  * ดึงข้อมูลผู้ใช้ หาก override อยู่ให้ตอบกลับข้อมูลที่ override
+  * หรือหากมีการส่งพารามิเตอร์เข้ามาให้ตอบกลับข้อมูลของพารามิเตอร์
+  * หมายเหตุ: หากมีการ override ให้ตอบกลับว่า override_by ด้วย
+  * @param int รหัสประจำตัวผู้ใช้
+  * @return assoc_array ข้อมูลผู้ใช้ตาม ตาราง user
+  * @method getId
+  **/
   public function get($uid = 0)
   {
     if(empty($uid)){
@@ -185,6 +201,12 @@ class User extends CI_Model {
       return $users[0];
     }
   }
+  /**
+  * ตรวจสอบว่ารหัสผู้ใชดังกล่าวมีอยู่จริงหรือไม่
+  * @param int รหัสผู้ใช้
+  * @return boolean
+  * @method isExist
+  **/
   public function isExist($uid)
   {
     $cnt = $this->db
@@ -192,12 +214,26 @@ class User extends CI_Model {
         ->count_all_results('user');
     return $cnt > 0;
   }
+  /**
+  * ลบผู้ใช้ออกจากระบบ
+  * หมายเหตุ: ลบแค่ตาราง user
+  * @param int รหัสผู้ใช้
+  * @method remove
+  **/
   public function remove($uid)
   {
     $this->db
       ->where('id', $uid)
       ->delete('user');
   }
+  /**
+  * กำหนดประเภทของผู้ใช้
+  * มีด้วยกัน 4 ประเภทคือ admin,user,ban,disable
+  * หากตั้ง user เป็น ban หรือเอาออกจาก ban ต้องอัปเดตตาราง path ให้ใช้งานได้ด้วย
+  * หากเอาสถานะออกจาก ban หรือ disable ต้องเคลีย user.ban_note ด้วย
+  * @param int รหัสผู้ใช้, String ประเภท
+  * @method setType
+  **/
   public function setType($uid,$type)
   {
     $old_type = $this->db
@@ -229,6 +265,11 @@ class User extends CI_Model {
       ->where('id',$uid)
       ->update('user',$data);
   }
+  /**
+  * สำหรับบันทึก note ของผู้ใช้ให้ผู้ดูแลจำได้ว่าเป็นใคร
+  * @param int รหัสผู้ใช้, String โน้ต
+  * @method setNote
+  **/
   public function setNote($uid,$note)
   {
     $this->db
@@ -237,6 +278,11 @@ class User extends CI_Model {
         'note' => $note
       ));
   }
+  /**
+  * สำหรับหน้าแรกหากโดนแบนหรือระงับ จะแสดงข้อความนี้ให้ผู้ใช้ดูโดยให้ผู้ดูแลเป็นคนตั้ง
+  * @param int รหัสผู้ใช้, String โน้ตเมื่อโดนแบน
+  * @method setNote
+  **/
   public function setBanNote($uid,$note)
   {
     $this->db
@@ -245,6 +291,11 @@ class User extends CI_Model {
         'ban_note' => $note
       ));
   }
+  /**
+  * สำหรับตั้งโควต้าต่อวันที่ผู้ใช้จะสร้างลิงก์ได้
+  * @param int รหัสผู้ใช้,int ปริมาณที่สร้างลิงค์ได้ต่อวัน
+  * @method setQuota
+  **/
   public function setQuota($uid,$cnt)
   {
     $this->db
