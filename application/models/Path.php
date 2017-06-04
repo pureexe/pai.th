@@ -204,4 +204,46 @@ class Path extends CI_Model {
       ->where('owner', $uid)
       ->delete('path');
   }
+  /**
+  * ค้นหาโดยพาธสั้น
+  * @param String ส่วนใดส่วนหนึ่งของพาธ
+  * @return assoc_array พาธที่เจอ
+  * @method searchByShort
+  **/
+  public function searchByShort($path)
+  {
+      $output = $this->db
+        ->select('path.id,path.full,path.short,path.updated_time,user.username,user.note')
+        ->from('path')
+        ->join('user','path.owner = user.id','LEFT')
+        ->like('short',$path)
+        ->limit(20)
+        ->get()
+        ->result_array();
+      foreach ($output as &$o) {
+        $o['id'] = intval($o['id']);
+      }
+      return $output;
+  }
+  /**
+  * ค้นหาโดยลิงก์เต็ม
+  * @param String ส่วนใดส่วนหนึ่งของพาธ
+  * @return assoc_array พาธที่เจอ
+  * @method searchByFull
+  **/
+  public function searchByFull($path)
+  {
+      $output = $this->db
+        ->select('path.id,path.full,path.short,path.updated_time,user.username,user.note')
+        ->from('path')
+        ->join('user','path.owner = user.id','LEFT')
+        ->like('full',$path)
+        ->limit(20)
+        ->get()
+        ->result_array();
+      foreach ($output as &$o) {
+        $o['id'] = intval($o['id']);
+      }
+      return $output;
+  }
 }
