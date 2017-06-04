@@ -32,10 +32,14 @@
           <label class="mdl-textfield__label" for="confirm_password">ยืนยันรหัสผ่านอีกครั้ง</label>
         </div>
         <input type="hidden" name="invite_token" value="<?=$invite_token?>" />
+        <?php if(!empty($username)): ?>
+          <input type="hidden" v-model="acceptTOS" value="true">
+        <?php else: ?>
         <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="acceptTOS" style="margin-top:10px;margin-bottom:20px;">
           <input type="checkbox" id="acceptTOS" class="mdl-checkbox__input" v-model="acceptTOS">
           <span class="mdl-checkbox__label">ยอมรับ <a href="/ข้อตกลง" target="_blank">ข้อตกลงการใช้งาน</a></span>
         </label>
+        <?php endif; ?>
         <center>
           <p class="red" v-show="mismatch">รหัสผ่านไม่ตรงกัน</p>
           <p class="red" v-show="emptyPassword">กรุณากรอกรหัสผ่าน</p>
