@@ -32,11 +32,15 @@
           <label class="mdl-textfield__label" for="confirm_password">ยืนยันรหัสผ่านอีกครั้ง</label>
         </div>
         <input type="hidden" name="invite_token" value="<?=$invite_token?>" />
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="acceptTOS" style="margin-top:10px;margin-bottom:20px;">
+          <input type="checkbox" id="acceptTOS" class="mdl-checkbox__input" v-model="acceptTOS">
+          <span class="mdl-checkbox__label">ยอมรับ <a href="/ข้อตกลง" target="_blank">ข้อตกลงการใช้งาน</a></span>
+        </label>
         <center>
           <p class="red" v-show="mismatch">รหัสผ่านไม่ตรงกัน</p>
           <p class="red" v-show="emptyPassword">กรุณากรอกรหัสผ่าน</p>
           <p class="red" v-show="usernameNotAccept">ชื่อผู้ใช้ต้องเป็นภาษาอังกฤษและตัวเลขเท่านั้น</p>
-          <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" :disabled="!submitable || usernameNotAccept">
+          <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" :disabled="!submitable || usernameNotAccept || !acceptTOS">
             สมัครสมาชิก
           </button>
         </center>
