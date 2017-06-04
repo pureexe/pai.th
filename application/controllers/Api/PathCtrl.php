@@ -121,4 +121,15 @@ class PathCtrl extends CI_Controller {
       'count' => $this->Path->count($uid),
     ));
   }
+  public function remove($pathId){
+    $this->user = $this->User->getReal();
+    if($this->user['type'] != 'admin'){
+      return $this->Rest->error($this->lang->line('only_admin_can_do'));
+    }
+    if($this->Path->remove($pathId)){
+      return $this->Rest->render(array('id' => intval($pathId)));
+    }else{
+      return $this->Rest->error($this->lang->line('cant_remove_non_exist_path'));
+    }
+  }
 }

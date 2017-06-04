@@ -19,3 +19,4 @@ $lang['invalid_invite_card'] = 'บัตรเชิญของคุณไม
 $lang['you_dont_have_invite_card'] = 'คุณไม่ได้ใช้บัตรเชิญในการสมัครสมาชิก';
 $lang['cant_change_username'] = 'ไม่สามารถเปลี่ยนชื่อผู้ใช้ได้';
 $lang['cant_override_yourself'] = 'ไม่สามารถเข้าสู่ระบบเป็นตัวเองได้';
+$lang['cant_remove_non_exist_path'] = 'ไม่สามารถลบเส้นทางที่ไม่มีอยู่ได้';

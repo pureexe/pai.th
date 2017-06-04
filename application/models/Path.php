@@ -112,4 +112,22 @@ class Path extends CI_Model {
           ->count_all_results('path');
     }
   }
+  public function remove($pathId)
+  {
+    if(ENVIRONMENT === 'production'){
+      $p = $this->db
+        ->select('short')
+        ->from('path')
+        ->where('id',$pathId)
+        ->get()->result_array();
+      if(!empty($p)){
+        $this->load->model('PathFirebase');
+        $this->PathFirebase->unlink($p['short']);
+      }
+    }
+    $this->db
+      ->where('id',$pathId)
+      ->delete('path');
+    return $this->db->affected_rows() > 0;
+  }
 }
