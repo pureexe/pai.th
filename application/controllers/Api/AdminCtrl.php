@@ -56,6 +56,7 @@ class AdminCtrl extends CI_Controller {
   {
     $quota = $this->input->post('quota');
     $type = $this->input->post('type');
+    $note = $this->input->post('note');
     $user = $this->User->get($uid);
     if(empty($user)){
         return $this->Rest->error($this->lang->line('cant_modify_non_exist_user'));
@@ -67,6 +68,9 @@ class AdminCtrl extends CI_Controller {
     }
     if(!empty($type) && in_array($type,array('admin','user','ban','disable'))){
       $this->User->setType($uid,$type);
+    }
+    if(!empty($note)){
+      $this->User->setNote($uid,$note);
     }
     $this->Rest->render(array(
       "id" => intval($uid)
