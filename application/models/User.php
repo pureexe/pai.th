@@ -25,27 +25,6 @@ class User extends CI_Model {
   {
     return !empty($this->getId());
   }
-  /**
-  * Warning form_validation is required before call this method
-  * @see Api/UserCtrl/createUser
-  * create user by username and password
-  * @method create
-  * @param username,password (plain-text!)
-  **/
-  /*
-  public function create($username,$password)
-  {
-    $this->load->library('phpass');
-    $this->load->config('subth');
-    $hash = $this->phpass->hash($password);
-    $this->db->insert('user',array(
-      'username' => $username,
-      'password' => $hash,
-      'type' => 'user',
-      'shorten_quota' => $this->config->item('shorten_quota')
-    ));
-    return intval($this->db->insert_id());
-  }*/
   public function getUniqueInvite()
   {
     $this->load->helper('thaistring');
