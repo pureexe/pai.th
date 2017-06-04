@@ -15,6 +15,7 @@
   RewriteBase /
   RewriteRule ^จัดการ$ assets/html/user_manage.html [L]
   RewriteRule ^ผู้ดูแล$ assets/html/admin_manage.html [L]
+  RewriteRule ^ข้อตกลง$ assets/html/term.html [L]
   #API protection by referer (Set more referer for whitelist);
   #RewriteCond %{HTTP:Referer} !^((.+)ซับ.ไทย(.+)|(.+)xn--c3c4a3d.xn--o3cw4h(.+)|(.+)localhost(.+)|(.+)127.0.0.1(.+))$
   #RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
