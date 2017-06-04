@@ -178,12 +178,22 @@
               {{user.type == "ban"?"แบน":""}}
               {{user.type == "disable"?"ระงับ":""}}
           </button>
+            <dialog v-bind:id="'removeuser_dialog_'+user.id" class="mdl-dialog">
+              <h4 class="mdl-dialog__title" style="font-size:1.8rem;text-align:left">ลบผู้ใช้</h4>
+              <div class="mdl-dialog__content">
+                ต้องการลบ {{user.username?user.username:user.note}} ใช่ไหม?
+              </div>
+              <div class="mdl-dialog__actions">
+                <button type="button" class="mdl-button" v-on:click.prevent="dialogRemoveUser">ตกลง</button>
+                <button type="button" class="mdl-button close" v-on:click.prevent="closeRemoveUserModal">ยกเลิก</button>
+              </div>
+            </dialog>
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" v-bind:for="'role-change-'+user.id">
             <li class="mdl-menu__item" v-on:click.prevent="changeUserType('user')">ผู้ใช้</li>
             <li class="mdl-menu__item" v-on:click.prevent="changeUserType('ban')">แบน</li>
             <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="changeUserType('disable')">ระงับ</li>
             <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="changeUserType('admin')">ผู้ดูแลระบบ</li>
-            <li class="mdl-menu__item" v-on:click.prevent="removeUser">ลบ</li>
+            <li class="mdl-menu__item" v-on:click.prevent="triggerRemoveUserModal">ลบ</li>
           </ul>
         </div>
         <div class="mdl-spinner mdl-js-spinner is-active" v-if="user.type == 'waiting...'"></div>
@@ -197,8 +207,14 @@
         <button class="mdl-button mdl-js-button"  v-on:click.prevent="copyInvite">
           {{user.invite_token}}
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeInvite" style="margin-top: -2px;color: #777;">
+        <button v-if="!removeInviteConfirm" class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="confirmRemoveInvite" style="margin-top: -2px;color: #777;">
           <i class="icon material-icons">delete</i>
+        </button>
+        <button v-if="removeInviteConfirm" class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="cancleRemoveInvite" style="margin-top: -2px;color: #777;">
+          <i class="icon material-icons">close</i>
+        </button>
+        <button v-if="removeInviteConfirm" class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeInvite" style="margin-top: -2px;color: #777;">
+          <i class="icon material-icons">done</i>
         </button>
         </div>
       </td>
@@ -388,6 +404,7 @@
           waitingForAccountOverride : false,
           note: "",
           note_error: "",
+          removeInviteConfirm: false
         }
       },
       props: ['user'],
@@ -443,6 +460,12 @@
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
           });
+        },
+        confirmRemoveInvite: function(){
+          this.removeInviteConfirm = true;
+        },
+        cancleRemoveInvite: function(){
+          this.removeInviteConfirm = false;
         },
         removeInvite: function(){
           this.$http.delete('user/'+this.user.id+'/invite').then(function(response){
@@ -501,7 +524,7 @@
         changeUserQuota: function(){
           var self = this;
           if(self.shorten_quota != parseInt(self.shorten_quota)){
-              return self.shorten_quota_error = "กรุณากรอกจำนวนตกเลขและห้ามเว้นว่าง";            
+              return self.shorten_quota_error = "กรุณากรอกจำนวนตกเลขและห้ามเว้นว่าง";
           }
           self.shorten_quota_error = "";
           self.user.shorten_quota = self.shorten_quota;
@@ -549,6 +572,16 @@
         },
         triggerUserNote: function(){
           document.querySelector('#note_dialog_'+this.user.id).showModal();
+        },
+        dialogRemoveUser: function(){
+          document.querySelector('#removeuser_dialog_'+this.user.id).close();
+          this.removeUser();
+        },
+        triggerRemoveUserModal: function(){
+          document.querySelector('#removeuser_dialog_'+this.user.id).showModal();
+        },
+        closeRemoveUserModal: function(){
+          document.querySelector('#removeuser_dialog_'+this.user.id).close();
         },
         removeUser: function(){
           window.VueNotify.$emit('removeById',this.user.id);
