@@ -222,7 +222,7 @@
                 <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+index" >
                   คัดลอกลิงก์ย่อ
                 </div>
-                <button class="copy-button mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeLinkById(path.id)">
+                <button v-if="user.override_by !== undefined || user.type == 'admin'" class="copy-button mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeLinkById(path.id)">
                   <i class="icon material-icons">delete</i>
                 </button>
               </td>
@@ -485,6 +485,7 @@
             totalItem: 0,
             pathList: [],
             isLoading: true,
+            user: {}
           }
         },
         methods:{
@@ -513,6 +514,16 @@
             if(pos != -1){
               this.pathList.splice(pos,1);
             }
+            this.$http.delete('path/'+id).then(function(){
+              //Do nothing
+            },function(error){
+              try{
+                window.VueNotify.$emit('snackbar',error.body.error.message);
+              }catch(e){
+                console.error(error.bodyText);
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+              }
+            });
           },
           copyToClipBoard: function(shortLink){
             var copied = window.copyTextToClipboard("https://ซับ.ไทย/"+shortLink);
@@ -534,6 +545,7 @@
           self.isLoading = true;
           window.VueNotify.$on('onAuthenticate',function(user){
             if(user){
+              self.user = user;
               self.fetch(1);
               self.$http.get('path/count').then(function(response){
                 self.totalItem = response.body.count;

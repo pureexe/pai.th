@@ -30,4 +30,15 @@ class PathFirebase extends CI_Model {
         ->getReference('path/'.$short)
         ->set($full);
   }
+  public function unlink($short)
+  {
+    //Only use firebase backup on production only!
+    if(ENVIRONMENT !== 'production'){
+      return;
+    }
+    $short = str_replace("/","|",$short);
+    $this->database
+        ->getReference('path/'.$short)
+        ->remove();
+  }
 }

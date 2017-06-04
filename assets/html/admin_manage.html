@@ -453,14 +453,14 @@
             },function(error){
               try{
                 window.VueNotify.$emit('snackbar',error.body.error.message);
-                self.waitingForAccountOverride = false;
-                self.$nextTick(function () {
-                  window.componentHandler.upgradeDom();
-                });
               }catch(e){
                 console.error(error.bodyText);
                 window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
               }
+              self.waitingForAccountOverride = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              });
             });
         },
         changeUserType: function(type){
