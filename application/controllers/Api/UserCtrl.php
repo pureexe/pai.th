@@ -12,6 +12,7 @@ class UserCtrl extends CI_Controller {
   * @method index
   **/
   private $user;
+  private $realUser;
   public function __construct()
 	{
     parent::__construct();
@@ -26,8 +27,15 @@ class UserCtrl extends CI_Controller {
     }else{
       $this->user = $this->User->get();
     }
-    if(!empty($this->user)){
+    if(!empty($this->user) && $this->user['type'] != 'ban' && $this->user['type'] != 'disable'){
       $this->Rest->render($this->user);
+    }else if(!empty($this->user)){
+      $this->realUser = $this->User->getReal();
+      if(empty($this->realUser) || $this->realUser['type'] != 'admin'){
+        $this->Rest->error($this->lang->line('your_account_is_suppend'),401);
+      }else{
+        $this->Rest->render($this->user);
+      }
     }else{
       $this->lang->load('subth','thai');
       $this->Rest->error($this->lang->line('signin_required'));

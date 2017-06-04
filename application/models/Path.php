@@ -72,18 +72,26 @@ class Path extends CI_Model {
         $shortPath = $customShortestPath;
       }
     }
-    $this->point($fullPath,$shortPath,$uid);
-    return $shortPath;
+    $id = $this->point($fullPath,$shortPath,$uid);
+    return array(
+      'id' => $id,
+      'path' => $shortPath
+    );
   }
-  public function getShortByFull($full,$uid)
+  public function getShortInfoByFull($full,$uid)
   {
     $query = $this->db
-      ->select('short')
+      ->select('id,short')
       ->from('path')
       ->where('full',$full)
       ->where('owner',$uid);
     $result = $query->get()->result_array();
-    return empty($result)?null:$result[0]['short'];
+    if(empty($result)){
+      return null;
+    }else{
+      $result[0]['id'] = intval($result[0]['id']);
+      return $result[0];
+    }
   }
   public function updateTime($short,$uid)
   {
@@ -110,6 +118,7 @@ class Path extends CI_Model {
       'full' => $fullUrl,
       'short' => $shortUrl
     ));
+    return intval($this->db->insert_id());
   }
   public function count($uid)
   {
