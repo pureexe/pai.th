@@ -16,13 +16,22 @@ class Path extends CI_Model {
     // but we have to less inode so i will skip cache and believe
     // in sql server performance
     $query = $this->db
-      ->select('full')
+      ->select('full,owner')
       ->from('path')
-      ->join('user','path.owner = user.id','left')
-      ->where('path.short',$path)
-      ->where('user.type !=','ban');
+      ->where('path.short',$path);
     $data = $query->get()->result_array();
-    return empty($data)?null:$data[0]['full'];
+    if(empty($data)){
+      return null;
+    }
+    $owner = $this->db
+      ->select('type')
+      ->from('user')
+      ->where('id',$data[0]['owner'])
+      ->get()->result_array();
+    if(!empty($owner) && $owner[0]['type'] == 'ban'){
+      return "https://ซับ.ไทย/ระงับ";
+    }
+    return $data[0]['full'];
   }
   /**
   * use for get user list;
