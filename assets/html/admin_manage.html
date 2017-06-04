@@ -501,7 +501,7 @@
         changeUserQuota: function(){
           var self = this;
           if(self.shorten_quota != parseInt(self.shorten_quota)){
-              self.shorten_quota_error = "กรุณากรอกจำนวนตกเลขและห้ามเว้นว่าง";
+              return self.shorten_quota_error = "กรุณากรอกจำนวนตกเลขและห้ามเว้นว่าง";            
           }
           self.shorten_quota_error = "";
           self.user.shorten_quota = self.shorten_quota;
@@ -527,6 +527,8 @@
           var self = this;
           if(self.note == "" ){
               self.note_error = "ไม่สามารถเว้นว่างโน้ตไว้ได้";
+              console.log('error');
+              return ;
           }
           self.note_error = "";
           self.user.note = self.note;
