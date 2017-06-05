@@ -41,6 +41,7 @@
         <page-header></page-header>
         <page-signin v-show="page == 'signin'"></page-signin>
         <page-users v-show="page == 'users'"></page-users>
+        <page-search v-show="page == 'search'"></page-search>
       </div>
       <snackbar></snackbar>
     </div>
@@ -53,9 +54,19 @@
         <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
         <div class="mdl-layout-spacer"></div>
         <div v-show="user.username != ''">
-          <a href='/จัดการ' style="margin-right: 15px;color:#fff">จัดการ</a>
+          <button class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" v-on:click.prevent="search">
+            <i class="material-icons">search</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" v-on:click.prevent="users">
+            <i class="material-icons">supervisor_account</i>
+          </button>
+          <a class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" href='/จัดการ'>
+            <i class="material-icons">link</i>
+          </a>
           <span style="margin-right: 15px;color:#fff">{{user.username}}</span>
-          <a href='#' v-on:click.prevent="logout" style="color:#fff">ออกจากระบบ</a>
+          <button class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" v-on:click.prevent="logout">
+            <i class="material-icons">exit_to_app</i>
+          </button>
         </div>
       </div>
     </header>
@@ -257,6 +268,65 @@
       </td>
     </tr>
     </script>
+    <script id="template-page-search" type="text/x-vue-template">
+      <div class="container" style="padding-top:20px;padding-bottom:20px">
+        <div class="mdl-card mdl-shadow--2dp" style="width:100%;height:auto;min-height:0px;padding-left:20px;padding-right:20px;">
+          <form action="#" style="margin: 0px;display:flex" v-on:submit.prevent="search">
+            <div style="flex-shrink: 0;flex-grow: 1;">
+              <div class="mdl-textfield mdl-js-textfield" style="width:100%;">
+                <input class="mdl-textfield__input" type="text" id="searchQuery" v-model="query">
+                <label class="mdl-textfield__label" for="searchQuery">ค้นหา</label>
+              </div>
+            </div>
+            <div style="padding-top: 15px;padding-bottom: 15px;margin-left: 15px;">
+              <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"  v-on:click.prevent="search">
+                ค้นหา
+              </button>
+            </div>
+          </form>
+        </div>
+        <div style="margin-top:20px;">
+          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
+            <thead style="background-color: #f5f5f5;">
+              <tr>
+                <th>พาธไอดี</th>
+                <th class="mdl-data-table__cell--non-numeric">ผู้ใช้</th>
+                <th class="mdl-data-table__cell--non-numeric">โน้ต</th>
+                <th class="mdl-data-table__cell--non-numeric">ลิ้งค์เต็ม</th>
+                <th class="mdl-data-table__cell--non-numeric">ลิ้งค์ย่อ</th>
+                <th class="mdl-data-table__cell--non-numeric">เวลา</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-show='isLoading'>
+                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+              </tr>
+              <tr v-show="result.length == 0">
+                <td colspan="6">
+                  <center>ไม่มีผลลัพธ์</center>
+                </td>
+              </tr>
+              <tr v-for="path in result">
+                <td>{{path.id}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.username}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.note}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.full}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.short}}</td>
+                <td></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="6" style="background-color: #f5f5f5;">
+                  แสดงผลการค้นหา 20 อันดับแรก
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </script>
+    </script>
     <script id="template-snackbar" type="text/x-vue-template">
       <div id="snackbarContainer" class="mdl-js-snackbar mdl-snackbar">
         <div class="mdl-snackbar__text"></div>
@@ -336,6 +406,12 @@
           },function(){
             window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
           });
+        },
+        search: function(){
+          window.VueNotify.$emit('switchPage','search');
+        },
+        users: function(){
+          window.VueNotify.$emit('switchPage','users');
         }
       }
     });
@@ -669,6 +745,39 @@
         }
       }
     });
+    Vue.component('page-search',{
+      template: '#template-page-search',
+      data: function(){
+        return {
+          query: "",
+          result: [],
+          isLoading: false
+        }
+      },
+      methods: {
+        search: function(){
+          var self = this;
+          self.$http.get('path/search?q='+self.query).then(function(response){
+            self.result = response.body.path;
+            for(var i = 0;i<self.result.length;i++){
+              self.result[i].date = new Date(self.result[i].updated_time);
+            }
+            self.isLoading = false;
+          },function(error){
+            try{
+              window.VueNotify.$emit('snackbar',error.body.error.message);
+            }catch(e){
+              console.error(error.body);
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            }
+            self.isLoading = false;
+          });
+        },
+        back: function(){
+          window.VueNotify.$emit('switchPage','user');
+        }
+      }
+    });
     Vue.component('page-signin', {
       template: '#template-page-signin',
       data: function(){
@@ -726,6 +835,9 @@
           }else{
             self.page = "signin";
           }
+        });
+        window.VueNotify.$on('switchPage',function(page){
+          self.page = page;
         });
         window.VueNotify.$emit('getUser',null);
       }
