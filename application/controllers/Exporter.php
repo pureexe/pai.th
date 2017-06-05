@@ -16,7 +16,7 @@ class Exporter extends CI_Controller {
     }
     echo('sub.th to Firebase Exporter'.PHP_EOL);
     echo('============================'.PHP_EOL);
-    if (!file_exists('_output/firebase')) {
+    if(!file_exists('_output/firebase')) {
       mkdir('_output/firebase', 0777, true);
     }
     $this->load->database();
@@ -45,5 +45,35 @@ class Exporter extends CI_Controller {
     }
     echo('sub.th to Jekyll Exporter'.PHP_EOL);
     echo('============================'.PHP_EOL);
+    if(!file_exists('_output/jekyll')) {
+      mkdir('_output/jekyll', 0777, true);
+    }
+    $this->load->database();
+    $pathList = $this->db
+      ->select('full,short')
+      ->from('path')
+      ->where('status !=','ban')
+      ->order_by('short')
+      ->get()
+      ->result_array();
+    foreach ($pathList as $path) {
+      $filename = '';
+      $folder = '';
+      if(strpos($path['short'], '/') !== false){
+        $folder = explode('/',$path['short']);
+        $filename = array_pop($folder);
+        $folder = implode('/',$folder);
+      }else{
+        $filename = $path['short'];
+      }
+      if(!file_exists('_output/jekyll/_path/'.$folder)) {
+        mkdir('_output/jekyll/_path/'.$folder, 0777, true);
+      }
+      $file = fopen('_output/jekyll/_path/'.$folder.'/'.$filename.'.md', 'w') or die('unable to open file!');
+      fwrite($file,'---'.PHP_EOL.'full:"'.$path['full'].'"'.PHP_EOL.'---');
+      fclose($file);
+    }
+    echo("export complete.". PHP_EOL);
+    echo("please copy all file at _output/jekyll and put it to jekyll repo");
   }
 }

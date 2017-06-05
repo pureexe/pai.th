@@ -62,6 +62,21 @@ class Path extends CI_Model {
     return $output;
   }
   /**
+  * สำหรับลบ / ด้านหน้า และด้านหลัง
+  * @param String
+  * @param String ที่ลบ / แล้ว
+  **/
+  public function path_normalize($path)
+  {
+    $patterns = array('~/{2,}~', '~/(\./)+~', '~([^/\.]+/(?R)*\.{2,}/)~', '~\.\./~');
+    $replacements = array('/', '/', '', '');
+    $path =preg_replace($patterns, $replacements, $path);
+    $patterns = array('~^/~', '~/$~');
+    $replacements = array('','');
+    $path = preg_replace($patterns, $replacements, $path);
+    return $path;
+  }
+  /**
   * สำหรับย่อลิ้งค์ หากยังไม่มีตัวอักษรย่อ จะทำการสุ่มภาษาไทยมา 5 ตัวอักษร
   * @param int รหัสผู้ใช้,String URLเต็ม,String เส้นทางที่ย่อแล้ว (ถ้ามี)
   * @method assoc_array รหัสของพาธที่ย่อและพาธที่ย่อแล้ว
@@ -76,6 +91,7 @@ class Path extends CI_Model {
         $shortPath = random_thai_string('carnum',5);
       }
     }else{
+      $customShortestPath = $this->path_normalize($customShortestPath);
       if($this->isExist($customShortestPath)){
         throw new Exception("เส้นทาง ".$customShortestPath." ถูกใช้ไปแล้ว", 1);
       }else{
