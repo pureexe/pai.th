@@ -139,6 +139,12 @@ class PathCtrl extends CI_Controller {
   }
   public function search()
   {
+    if(empty($this->realUser)){
+      $this->realUser = $this->User->getReal();
+    }
+    if($this->realUser['type'] != 'admin'){
+      return $this->Rest->error($this->lang->line('only_admin_can_do'));
+    }
     $q = $this->input->get('q');
     $q = str_replace("http://","",$q);
     $q = str_replace("https://","",$q);
@@ -154,14 +160,12 @@ class PathCtrl extends CI_Controller {
         'path' => $data
       ));
     }
-    echo "HERE";
     $data = $this->Path->searchByFull($q);
     if(!empty($data)){
       return $this->Rest->render(array(
         'path' => $data
       ));
     }
-    echo "HERE";
     return $this->Rest->render(array(
       "path" => array()
     ));
