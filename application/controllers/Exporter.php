@@ -9,6 +9,9 @@ class Exporter extends CI_Controller {
   {
     parent::__construct();
   }
+  /**
+  * Generate backup for firebase
+  **/
   public function firebase()
   {
     if(!is_cli()){
@@ -38,6 +41,9 @@ class Exporter extends CI_Controller {
     echo("export complete.". PHP_EOL);
     echo("please upload file at _output/firebase/subth_export.json to firebase");
   }
+  /**
+  * Generate backup for jekyll
+  **/
   public function jekyll()
   {
     if(!is_cli()){
