@@ -13,42 +13,20 @@ class AdminCtrl extends CI_Controller {
     $this->load->model("User")->model("Rest");
     $this->load->library('form_validation');
     $this->lang->load("subth","thai");
-    $this->user = $this->User->get();
+    $this->user = $this->User->getReal();
     if(empty($this->user) || $this->user['type'] != 'admin'){
       $this->Rest->error($this->lang->line("only_admin_can_do"));
       $this->output->_display();
       exit();
     }
 	}
-  public function create()
-  {
-    $this->form_validation
-      ->set_rules('username', 'username', 'required|trim|alpha_numeric|is_unique[user.username]')
-      ->set_rules('email', 'email', 'required|trim|valid_email|is_unique[user.email]');
-    if ($this->form_validation->run() == FALSE){
-      return $this->Rest->error(validation_errors(),1);
-    }
-    $username = $this->input->post("username");
-    $email = $this->input->post("email");
-    $password = $this->input->post("password");
-    //create random string if password not set
-    if(empty($password)){
-      $this->load->helper('string');
-      $password = random_string('alnum',8);
-    }
-    $id = $this->User->create($username,$email,$password);
-    $token = $this->User->generateInviteToken($id);
-    $this->Rest->render(array(
-      "id" => $id,
-      "invite_token" => $token
-    ));
-  }
   public function remove($uid)
   {
     if(!$this->User->isExist($uid)){
       return $this->Rest->error($this->lang->line("cant_remove_non_exist_user"));
     }
     $this->User->remove($uid);
+    $this->Path->removeByOwner($uid);
     $this->Rest->render(array(
         "id" => intval($uid)
     ));
@@ -57,6 +35,8 @@ class AdminCtrl extends CI_Controller {
   {
     $quota = $this->input->post('quota');
     $type = $this->input->post('type');
+    $note = $this->input->post('note');
+    $ban_note = $this->input->post('ban_note');
     $user = $this->User->get($uid);
     if(empty($user)){
         return $this->Rest->error($this->lang->line('cant_modify_non_exist_user'));
@@ -69,18 +49,45 @@ class AdminCtrl extends CI_Controller {
     if(!empty($type) && in_array($type,array('admin','user','ban','disable'))){
       $this->User->setType($uid,$type);
     }
+    if(!empty($note)){
+      $this->User->setNote($uid,$note);
+    }
+    if(!empty($ban_note)){
+      $this->User->setBanNote($uid,$ban_note);
+    }
     $this->Rest->render(array(
       "id" => intval($uid)
     ));
   }
-  public function invite($uid)
+  public function invite($uid = 0)
   {
-    if(!$this->User->isExist($uid)){
+    if(empty($uid)){
+      $note = $this->input->post("note");
+      $token = $this->User->inviteTokenForNewUser($note);
+      return $this->Rest->render($token);
+    }else if(!$this->User->isExist($uid)){
       return $this->Rest->error($this->lang->line('cant_issue_invite_token_for_non_exist_user'));
+    }else{
+      $token = $this->User->generateInviteToken($uid);
+      return $this->Rest->render(array(
+        "id" => intval($uid),
+        "invite_token" => $token
+      ));
     }
-    $token = $this->User->generateInviteToken($uid);
-    $this->Rest->render(array(
-      "invite_token" => $token
+  }
+  public function removeInvite($uid)
+  {
+    $user = $this->User->get($uid);
+    if(empty($user)){
+        return $this->Rest->error($this->lang->line('cant_modify_non_exist_user'));
+    }
+    if(empty($user['username'])){
+      $this->remove($uid);
+    }else{
+      $this->User->removeInviteToken($uid);
+    }
+    return $this->Rest->render(array(
+      "id" => intval($uid)
     ));
   }
   public function all()
