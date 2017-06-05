@@ -1,5 +1,5 @@
 # sub.th
-ซับ.ไทย เวอร์ชั่นเขี่ยนใหม่ด้วย codeigiter
+ซับ.ไทย เวอร์ชั่นเขียนใหม่ด้วย codeigiter
 
 ## เซิฟเวอร์
 - รองรับ HTTP verb GET/POST/DELETE/PUT

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2017 at 02:36 PM
+-- Generation Time: Jun 05, 2017 at 09:06 AM
 -- Server version: 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -59,7 +59,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `invite_token`, `type`, `shorten_quota`, `note`, `ban_note`) VALUES
-(1, 'pureexe', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', 33, 'pure\'s app', '');
+(1, 'pureexe', '$2a$08$yDbsEgIeBk0ktCdbVKMFn.i4JzDMQo/YsXBBomk/qlk7FkAcb4qua', '', 'admin', 33, 'pure\'s app', ''),
+(2, '', '', 'ษวผจรษญต', 'user', 33, 'New User', '');
 
 --
 -- Indexes for dumped tables
@@ -90,7 +91,7 @@ ALTER TABLE `path`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
