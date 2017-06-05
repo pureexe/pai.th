@@ -76,6 +76,7 @@ $route['api/v1/path/search']['get'] = 'Api/PathCtrl/search';
 $route['api/v1/path']['post'] = 'Api/PathCtrl/add';
 $route['api/v1/path/(:num)']['delete'] = 'Api/PathCtrl/remove/$1';
 
+//Exporter for backup system
 $route['export/firebase'] = "Exporter/firebase";
 $route['export/jekyll'] = "Exporter/jekyll";
 
