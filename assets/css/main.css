@@ -47,7 +47,8 @@ footer{
   display:flex;
 }
 .mdl-mini-footer__link-list .li{
-  margin-right:15px;
+  margin-left:7px;
+  margin-right:7px;
 }
 .flex-spacer{
   flex-grow: 1;
