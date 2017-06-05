@@ -1,5 +1,5 @@
 #Change CI_ENV from developemnt to production if it running on real server
-#SetEnv CI_ENV production
+SetEnv CI_ENV production
 
 <Limit GET POST DELETE PUT>
   Order deny,allow
@@ -44,7 +44,7 @@
 ErrorDocument 508 /500.shtml
 
 #HTML static page cache
-<filesMatch "\.(html|htm)$">
+<filesMatch "\.(html|htm|css|js|jpg|jpeg|png)$">
   #Remove must-revalidate follow MDN docs // will undo if it take an error
   Header set Cache-Control "max-age=31536000, min-fresh=7200, public"
 </filesMatch>
