@@ -54,24 +54,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 * codeigniter not support UTF-8 routing. so we have no choice.
 **/
 $route['default_controller'] = 'welcome';
-$route[urlencode('จัดการ')] = 'SpaCtrl/user_manage';
-$route[urlencode('ผู้ดูแล')] = 'SpaCtrl/admin_manage';
 $route[urlencode('สมัคร')]['get'] = 'InviteCtrl/register';
 $route[urlencode('สมัคร')]['post'] = 'InviteCtrl/register_post';
 
 //API for private use only!
 $route['api/v1/user']['get'] = 'Api/UserCtrl';
+$route['api/v1/user/override']['post'] = 'Api/OverrideCtrl/create';
+$route['api/v1/user/override']['delete'] = 'Api/OverrideCtrl/remove';
+$route['api/v1/user/invite']['post'] = 'Api/AdminCtrl/invite'; //issue invite token
 $route['api/v1/user/list']['get'] = 'Api/AdminCtrl/all'; //admin only!
-$route['api/v1/user']['post'] = 'Api/AdminCtrl/create'; //admin only!
 $route['api/v1/user/(:num)']['get'] = 'Api/AdminCtrl/get/$1'; //admin only!
 $route['api/v1/user/(:num)']['post'] = 'Api/AdminCtrl/update/$1'; //updte quota or permission
 $route['api/v1/user/(:num)']['delete'] = 'Api/AdminCtrl/remove/$1'; //remove user
 $route['api/v1/user/(:num)/invite']['post'] = 'Api/AdminCtrl/invite/$1'; //re issue invite
+$route['api/v1/user/(:num)/invite']['delete'] = 'Api/AdminCtrl/removeInvite/$1';
 $route['api/v1/auth']['post'] = 'Api/AuthCtrl/signin';
 $route['api/v1/auth']['delete'] = 'Api/AuthCtrl/logout';
 $route['api/v1/path']['get'] = 'Api/PathCtrl/all';
 $route['api/v1/path/count']['get'] = 'Api/PathCtrl/count';
+$route['api/v1/path/search']['get'] = 'Api/PathCtrl/search';
 $route['api/v1/path']['post'] = 'Api/PathCtrl/add';
+$route['api/v1/path/(:num)']['delete'] = 'Api/PathCtrl/remove/$1';
+
+//Exporter for backup system
+$route['export/firebase'] = "Exporter/firebase";
+$route['export/jekyll'] = "Exporter/jekyll";
 
 $route['(.+)'] = 'RedirectorCtrl';
 $route['404_override'] = 'RedirectorCtrl/notfound';

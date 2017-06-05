@@ -41,6 +41,7 @@
         <page-header></page-header>
         <page-signin v-show="page == 'signin'"></page-signin>
         <page-users v-show="page == 'users'"></page-users>
+        <page-search v-show="page == 'search'"></page-search>
       </div>
       <snackbar></snackbar>
     </div>
@@ -53,8 +54,19 @@
         <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
         <div class="mdl-layout-spacer"></div>
         <div v-show="user.username != ''">
+          <button class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" v-on:click.prevent="search">
+            <i class="material-icons">search</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" v-on:click.prevent="users">
+            <i class="material-icons">supervisor_account</i>
+          </button>
+          <a class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" href='/จัดการ'>
+            <i class="material-icons">link</i>
+          </a>
           <span style="margin-right: 15px;color:#fff">{{user.username}}</span>
-          <a href='#' v-on:click.prevent="logout" style="color:#fff">ออกจากระบบ</a>
+          <button class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" v-on:click.prevent="logout">
+            <i class="material-icons">exit_to_app</i>
+          </button>
         </div>
       </div>
     </header>
@@ -99,12 +111,8 @@
             <div class="mdl-dialog__content">
               <form v-on:submit.prevent="doAddUser">
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input class="mdl-textfield__input" type="text" id="username" v-model="username" autocomplete="off">
-                  <label class="mdl-textfield__label" for="username">ชื่อผู้ใช้</label>
-                </div>
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input class="mdl-textfield__input" type="text" id="email" v-model="email" autocomplete="off">
-                  <label class="mdl-textfield__label" for="email">อีเมล</label>
+                  <input class="mdl-textfield__input" type="text" id="note" v-model="note" autocomplete="off">
+                  <label class="mdl-textfield__label" for="note">โน้ต</label>
                 </div>
                 <p class="red">{{dialog_error_message}}</p>
               </form>
@@ -127,7 +135,7 @@
         <tr>
           <th>ไอดี</th>
           <th class="mdl-data-table__cell--non-numeric">ชื่อผู้ใช้</th>
-          <th class="mdl-data-table__cell--non-numeric">อีเมล</th>
+          <th class="mdl-data-table__cell--non-numeric">โน้ต</th>
           <th class="mdl-data-table__cell--non-numeric">สถานะ</th>
           <th class="mdl-data-table__cell--non-numeric">บัตรเชิญ</th>
           <th>โควต้า</th>
@@ -146,8 +154,33 @@
     <script id="template-row-user" type="text/x-vue-template">
     <tr>
       <td>{{user.id}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{user.username}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{user.email}}</td>
+      <td class="mdl-data-table__cell--non-numeric">
+        <button class="mdl-button mdl-js-button" v-if="user.username && !waitingForAccountOverride" style="text-transform: none;" v-on:click.prevent="overrideAccount">
+          {{user.username}}
+        </button>
+        <div class="mdl-spinner mdl-js-spinner is-active" v-if="waitingForAccountOverride"></div>
+      </td>
+      <td class="mdl-data-table__cell--non-numeric">
+        <dialog v-bind:id="'note_dialog_'+user.id" class="mdl-dialog">
+          <h4 class="mdl-dialog__title" style="font-size:1.8rem;text-align:left">แก้ไขโน้ต</h4>
+          <div class="mdl-dialog__content">
+            <form v-on:submit.prevent="changeUserNote">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input"  v-bind:id="'note_'+user.id" v-model="note" autocomplete="off">
+                <label class="mdl-textfield__label" v-bind:for="'note_'+user.id">โน้ต</label>
+              </div>
+              <p class="red">{{note_error}}</p>
+            </form>
+          </div>
+          <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button" v-on:click.prevent="changeUserNote">บันทึก</button>
+            <button type="button" class="mdl-button close" v-on:click.prevent="closeUserNoteModal">ยกเลิก</button>
+          </div>
+        </dialog>
+        <button class="mdl-button mdl-js-button" style="text-transform: none;" v-on:click.prevent="triggerUserNote">
+          {{user.note}}
+        </button>
+      </td>
       <td class="mdl-data-table__cell--non-numeric">
         <div v-if="user.type != 'waiting...'">
           <button v-bind:id="'role-change-'+user.id" class="mdl-button mdl-js-button ">
@@ -156,12 +189,38 @@
               {{user.type == "ban"?"แบน":""}}
               {{user.type == "disable"?"ระงับ":""}}
           </button>
+            <dialog v-bind:id="'removeuser_dialog_'+user.id" class="mdl-dialog">
+              <h4 class="mdl-dialog__title" style="font-size:1.8rem;text-align:left">ลบผู้ใช้</h4>
+              <div class="mdl-dialog__content">
+                ต้องการลบ {{user.username?user.username:user.note}} ใช่ไหม?
+              </div>
+              <div class="mdl-dialog__actions">
+                <button type="button" class="mdl-button" v-on:click.prevent="dialogRemoveUser">ตกลง</button>
+                <button type="button" class="mdl-button close" v-on:click.prevent="closeRemoveUserModal">ยกเลิก</button>
+              </div>
+            </dialog>
+            <dialog v-bind:id="'ban_note_dialog_'+user.id" class="mdl-dialog">
+              <h4 class="mdl-dialog__title" style="font-size:1.8rem;text-align:left">ระงับการเข้าระบบ</h4>
+              <div class="mdl-dialog__content">
+                <form v-on:submit.prevent="changeUserQuota">
+                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text"  v-bind:id="'ban_note_'+user.id" v-model="ban_note" autocomplete="off">
+                    <label class="mdl-textfield__label" v-bind:for="'ban_note_'+user.id">คำอธิบายการระงับเข้าระบบ</label>
+                  </div>
+                  <p class="red">{{ban_note_error}}</p>
+                </form>
+              </div>
+              <div class="mdl-dialog__actions">
+                <button type="button" class="mdl-button" v-on:click.prevent="doUpdateBanNote">ตั้งค่า</button>
+                <button type="button" class="mdl-button close" v-on:click.prevent="closeBanNoteModal">ยกเลิก</button>
+              </div>
+            </dialog>
             <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" v-bind:for="'role-change-'+user.id">
             <li class="mdl-menu__item" v-on:click.prevent="changeUserType('user')">ผู้ใช้</li>
-            <li class="mdl-menu__item" v-on:click.prevent="changeUserType('ban')">แบน</li>
-            <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="changeUserType('disable')">ระงับ</li>
+            <li class="mdl-menu__item" v-on:click.prevent="triggerBanNoteModal('ban')">แบน</li>
+            <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="triggerBanNoteModal('disable')">ระงับ</li>
             <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" v-on:click.prevent="changeUserType('admin')">ผู้ดูแลระบบ</li>
-            <li class="mdl-menu__item" v-on:click.prevent="removeUser">ลบ</li>
+            <li class="mdl-menu__item" v-on:click.prevent="triggerRemoveUserModal">ลบ</li>
           </ul>
         </div>
         <div class="mdl-spinner mdl-js-spinner is-active" v-if="user.type == 'waiting...'"></div>
@@ -171,9 +230,20 @@
         <button class="mdl-button mdl-js-button" v-if="user.invite_token == '' && !creatingInviteToken" v-on:click.prevent="createInvite">
           -
         </button>
-        <button class="mdl-button mdl-js-button" v-if="user.invite_token != '' && user.invite_token != 'generating...' && !creatingInviteToken" v-on:click.prevent="copyInvite">
-          {{user.invite_token}} <i class="icon material-icons">content_copy</i>
+        <div v-if="user.invite_token != '' && user.invite_token != 'generating...' && !creatingInviteToken">
+        <button class="mdl-button mdl-js-button"  v-on:click.prevent="copyInvite">
+          {{user.invite_token}}
         </button>
+        <button v-if="!removeInviteConfirm" class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="confirmRemoveInvite" style="margin-top: -2px;color: #777;">
+          <i class="icon material-icons">delete</i>
+        </button>
+        <button v-if="removeInviteConfirm" class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="cancleRemoveInvite" style="margin-top: -2px;color: #777;">
+          <i class="icon material-icons">close</i>
+        </button>
+        <button v-if="removeInviteConfirm" class="mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removeInvite" style="margin-top: -2px;color: #777;">
+          <i class="icon material-icons">done</i>
+        </button>
+        </div>
       </td>
       <td>
         <dialog v-bind:id="'shorten_quota_dialog_'+user.id" class="mdl-dialog">
@@ -197,6 +267,67 @@
         </button>
       </td>
     </tr>
+    </script>
+    <script id="template-page-search" type="text/x-vue-template">
+      <div class="container" style="padding-top:20px;padding-bottom:20px">
+        <div class="mdl-card mdl-shadow--2dp" style="width:100%;height:auto;min-height:0px;padding-left:20px;padding-right:20px;">
+          <form action="#" style="margin: 0px;display:flex" v-on:submit.prevent="search">
+            <div style="flex-shrink: 0;flex-grow: 1;">
+              <div class="mdl-textfield mdl-js-textfield" style="width:100%;">
+                <input class="mdl-textfield__input" type="text" id="searchQuery" v-model="query">
+                <label class="mdl-textfield__label" for="searchQuery">ค้นหา</label>
+              </div>
+            </div>
+            <div style="padding-top: 15px;padding-bottom: 15px;margin-left: 15px;">
+              <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"  v-on:click.prevent="search">
+                ค้นหา
+              </button>
+            </div>
+          </form>
+        </div>
+        <div style="margin-top:20px;">
+          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
+            <thead style="background-color: #f5f5f5;">
+              <tr>
+                <th>พาธไอดี</th>
+                <th class="mdl-data-table__cell--non-numeric">ผู้ใช้</th>
+                <th class="mdl-data-table__cell--non-numeric">โน้ต</th>
+                <th class="mdl-data-table__cell--non-numeric">ลิ้งค์เต็ม</th>
+                <th class="mdl-data-table__cell--non-numeric">ลิ้งค์ย่อ</th>
+                <th class="mdl-data-table__cell--non-numeric">เวลา</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-show='isLoading'>
+                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+              </tr>
+              <tr v-show="result.length == 0">
+                <td colspan="6">
+                  <center>ไม่มีผลลัพธ์</center>
+                </td>
+              </tr>
+              <tr v-for="path in result">
+                <td>{{path.id}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.username}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.note}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.full}}</td>
+                <td class="mdl-data-table__cell--non-numeric">{{path.short}}</td>
+                <td>
+                  {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}}
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="6" style="background-color: #f5f5f5;">
+                  แสดงผลการค้นหา 20 อันดับแรก
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </script>
     </script>
     <script id="template-snackbar" type="text/x-vue-template">
       <div id="snackbarContainer" class="mdl-js-snackbar mdl-snackbar">
@@ -277,6 +408,12 @@
           },function(){
             window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
           });
+        },
+        search: function(){
+          window.VueNotify.$emit('switchPage','search');
+        },
+        users: function(){
+          window.VueNotify.$emit('switchPage','users');
         }
       }
     });
@@ -358,13 +495,20 @@
           creatingInviteToken: false,
           shorten_quota: 33,
           shorten_quota_error: "",
+          waitingForAccountOverride : false,
+          note: "",
+          note_error: "",
+          removeInviteConfirm: false,
+          ban_note: "",
+          ban_note_error: "",
+          ban_note_type: ""
         }
       },
       props: ['user'],
       mounted: function(){
         var self = this;
         if(self.user.tempId){
-          self.$http.post('user',{username:self.user.username,email:self.user.email}).then(function(response){
+          self.$http.post('user/invite',{note:self.user.note}).then(function(response){
             delete self.user.tempId;
             self.user.type='user';
             self.user.shorten_quota = 33;
@@ -380,6 +524,7 @@
             window.VueNotify.$emit('removeByTempId',self.user.tempId);
           });
         }else{
+          self.note = self.user.note;
           self.shorten_quota = self.user.shorten_quota;
           self.$nextTick(function () {
             window.componentHandler.upgradeDom();
@@ -390,7 +535,7 @@
         copyInvite: function(){
           var copied = window.copyTextToClipboard("https://ซับ.ไทย/สมัคร?บัตรเชิญ="+this.user.invite_token);
           if(copied){
-            window.VueNotify.$emit('snackbar',"คัดลอกบัตรเชิญของ "+this.user.username+" แล้ว");
+            window.VueNotify.$emit('snackbar',"คัดลอกบัตรเชิญของ "+((this.user.username)?this.user.username:this.user.note)+" แล้ว");
           }else{
             window.VueNotify.$emit('snackbar','เบราว์เซอร์นี้ไม่สามารถคัดลอกได้');
           }
@@ -413,6 +558,54 @@
             }
           });
         },
+        confirmRemoveInvite: function(){
+          this.removeInviteConfirm = true;
+        },
+        cancleRemoveInvite: function(){
+          this.removeInviteConfirm = false;
+        },
+        removeInvite: function(){
+          this.$http.delete('user/'+this.user.id+'/invite').then(function(response){
+              //Do nothing;
+          },function(error){
+            try{
+              window.VueNotify.$emit('snackbar',error.body.error.message);
+            }catch(e){
+              console.error(error.body);
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            }
+          });
+          if(this.user.username === undefined || this.user.username==""){
+            window.VueNotify.$emit('removeById',this.user.id);
+          }else{
+            this.user.invite_token = "";
+          }
+        },
+        overrideAccount: function(){
+            var self = this;
+            self.waitingForAccountOverride = true;
+            self.$nextTick(function () {
+              window.componentHandler.upgradeDom();
+            });
+            self.$http.post('user/override',{uid:self.user.id}).then(function(){
+              self.waitingForAccountOverride = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              });
+              window.location.replace('/จัดการ');
+            },function(error){
+              try{
+                window.VueNotify.$emit('snackbar',error.body.error.message);
+              }catch(e){
+                console.error(error.bodyText);
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+              }
+              self.waitingForAccountOverride = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              });
+            });
+        },
         changeUserType: function(type){
           this.user.type = type;
           this.$http.post('user/'+this.user.id,{'type':type}).then(function(response){
@@ -428,7 +621,7 @@
         changeUserQuota: function(){
           var self = this;
           if(self.shorten_quota != parseInt(self.shorten_quota)){
-              self.shorten_quota_error = "กรุณากรอกจำนวนตกเลขและห้ามเว้นว่าง";
+              return self.shorten_quota_error = "กรุณากรอกจำนวนตกเลขและห้ามเว้นว่าง";
           }
           self.shorten_quota_error = "";
           self.user.shorten_quota = self.shorten_quota;
@@ -439,15 +632,77 @@
             try{
               window.VueNotify.$emit('snackbar',error.body.error.message);
             }catch(e){
+              console.error(e);
               window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
             }
-          })
+          });
         },
         closeUserQuotaModal: function(){
           document.querySelector('#shorten_quota_dialog_'+this.user.id).close();
         },
         triggerUserQuota: function(){
           document.querySelector('#shorten_quota_dialog_'+this.user.id).showModal();
+        },
+        triggerBanNoteModal: function(type){
+          this.ban_note_type = type;
+          document.querySelector('#ban_note_dialog_'+this.user.id).showModal();
+        },
+        closeBanNoteModal: function(){
+          document.querySelector('#ban_note_dialog_'+this.user.id).close();
+        },
+        doUpdateBanNote: function(){
+          if(this.ban_note == ''){
+            return this.ban_note_error = 'ไม่สามารถเว้นว่างได้';
+          }
+          this.ban_note_error = '';
+          this.$http.post('user/'+this.user.id,{'ban_note':this.ban_note}).then(function(response){
+            //Do noting
+          },function(error){
+            try{
+              window.VueNotify.$emit('snackbar',error.body.error.message);
+            }catch(e){
+              console.error(e);
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            }
+          });
+          document.querySelector('#ban_note_dialog_'+this.user.id).close();
+          this.changeUserType(this.ban_note_type);
+        },
+        changeUserNote: function(){
+          var self = this;
+          if(self.note == "" ){
+              self.note_error = "ไม่สามารถเว้นว่างโน้ตไว้ได้";
+              return ;
+          }
+          self.note_error = "";
+          self.user.note = self.note;
+          document.querySelector('#note_dialog_'+this.user.id).close();
+          self.$http.post('user/'+this.user.id,{'note':self.note}).then(function(response){
+            //Do noting
+          },function(error){
+            try{
+              window.VueNotify.$emit('snackbar',error.body.error.message);
+            }catch(e){
+              console.error(e);
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            }
+          })
+        },
+        closeUserNoteModal: function(){
+          document.querySelector('#note_dialog_'+this.user.id).close();
+        },
+        triggerUserNote: function(){
+          document.querySelector('#note_dialog_'+this.user.id).showModal();
+        },
+        dialogRemoveUser: function(){
+          document.querySelector('#removeuser_dialog_'+this.user.id).close();
+          this.removeUser();
+        },
+        triggerRemoveUserModal: function(){
+          document.querySelector('#removeuser_dialog_'+this.user.id).showModal();
+        },
+        closeRemoveUserModal: function(){
+          document.querySelector('#removeuser_dialog_'+this.user.id).close();
         },
         removeUser: function(){
           window.VueNotify.$emit('removeById',this.user.id);
@@ -468,8 +723,7 @@
       template: '#template-page-users',
       data: function(){
         return {
-          "username": "",
-          "email": "",
+          "note": "",
           "dialog_error_message": ""
         }
       },
@@ -482,14 +736,47 @@
         },
         doAddUser: function()
         {
-          if(this.username == "" || this.email == ""){
-            return this.dialog_error_message = "กรุณาใส่ชื่อผู้ใช้และอีเมล";
+          if(this.note == ""){
+            return this.dialog_error_message = "กรุณาใส่โน้ตเพื่อช่วยจำ";
           }
           this.dialog_error_message = "";
-          window.VueNotify.$emit('doAddUser',{username:this.username,email:this.email});
+          window.VueNotify.$emit('doAddUser',{note:this.note});
           this.username = "";
           this.email = "";
           document.querySelector('#addUserDialog').close();
+        }
+      }
+    });
+    Vue.component('page-search',{
+      template: '#template-page-search',
+      data: function(){
+        return {
+          query: "",
+          result: [],
+          isLoading: false
+        }
+      },
+      methods: {
+        search: function(){
+          var self = this;
+          self.$http.get('path/search?q='+self.query).then(function(response){
+            self.result = response.body.path;
+            for(var i = 0;i<self.result.length;i++){
+              self.result[i].date = new Date(self.result[i].updated_time);
+            }
+            self.isLoading = false;
+          },function(error){
+            try{
+              window.VueNotify.$emit('snackbar',error.body.error.message);
+            }catch(e){
+              console.error(error.body);
+              window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+            }
+            self.isLoading = false;
+          });
+        },
+        back: function(){
+          window.VueNotify.$emit('switchPage','user');
         }
       }
     });
@@ -533,7 +820,7 @@
       mounted: function(){
         var self = this;
         window.VueNotify.$on('getUser',function(){
-          self.$http.get('user').then(function(response){
+          self.$http.get('user?real=true').then(function(response){
             if(response.body.type == 'admin'){
               window.VueNotify.$emit('onAuthenticate',response.body);
             }else{
@@ -550,6 +837,9 @@
           }else{
             self.page = "signin";
           }
+        });
+        window.VueNotify.$on('switchPage',function(page){
+          self.page = page;
         });
         window.VueNotify.$emit('getUser',null);
       }

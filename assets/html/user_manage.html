@@ -104,9 +104,17 @@
       <header class="" style="box-shadow:none;">
         <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;background-color:#fff">
           <span class="mdl-layout-title" style="color:#333;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
-          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-layout-spacer" style="text-align:center">
+            <div v-if="user.override_by">
+              คุณกำลังเข้าใช้งานในฐานะของ {{user.note}}
+              <a href="#" v-on:click.prevent="logoutFromOverride" v-if="!loggingOutFromOverride">(ยกเลิก)</a>
+              <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" v-if="loggingOutFromOverride"></div>
+            </div>
+          </div>
           <div v-show="user.username != ''">
-            <span style="margin-right: 15px;">{{user.username}}</span> <a href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
+            <a style="margin-right: 15px;" href='/ผู้ดูแล' v-show="user.type == 'admin'">ผู้ดูแล</a>
+            <span style="margin-right: 15px;">{{user.username}}</span>
+            <a v-if="user.override_by === undefined" href='#' v-on:click.prevent="logout">ออกจากระบบ</a>
           </div>
         </div>
       </header>
@@ -119,9 +127,18 @@
               <a href="https://ซับ.ไทย" style="font-family: Athiti, sans-serif;">ซับ.ไทย</a>
             </li>
             <li style="margin-right:15px;">
-              <a href="https://www.tafasu.com">TAFASU</a>
+              <a href="/ข้อตกลง" style="font-family: Athiti, sans-serif;">ข้อตกลง</a>
             </li>
           </ul>
+          <div style="flex-grow: 1; ">
+          </div>
+          <div>
+            <ul class="mdl-mini-footer__link-list">
+              <li style="margin-right:15px;">
+                <a href="https://ซับ.ไทย" style="font-family: Athiti, sans-serif;">สงวนลิขสิทธิ์ ©</a>
+              </li>
+            </ul>
+          </div>
         </div>
       </footer>
     </script>
@@ -193,21 +210,7 @@
                 </center>
               </td>
             </tr>
-            <tr v-for="(path, index) in pathList">
-              <td class="mdl-data-table__cell--non-numeric">
-                {{ path.full }}
-              </td>
-              <td class="mdl-data-table__cell--non-numeric">
-                {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}}
-              </td>
-              <td class="mdl-data-table__cell--non-numeric">
-                ซับ.ไทย/{{path.short}}
-                <button v-bind:id="'tooltip-copy-'+index" class="copy-button mdl-button mdl-js-button mdl-button--icon"><i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i></button>
-                <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+index" >
-                  คัดลอกลิงก์ย่อ
-                </div>
-              </td>
-            </tr>
+            <row-path v-for="path in pathList" :path="path" :deleteable="user.override_by !== undefined || user.type == 'admin'" ></row-path>
           </tbody>
           <tfoot>
             <tr>
@@ -222,6 +225,36 @@
           </tfoot>
         </table>
       </div>
+    </script>
+    <script id="template-row-path" type="text/x-vue-template">
+    <tr>
+      <td class="mdl-data-table__cell--non-numeric">
+        {{ path.full }}
+      </td>
+      <td class="mdl-data-table__cell--non-numeric">
+        {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}}
+      </td>
+      <td class="mdl-data-table__cell--non-numeric">
+        ซับ.ไทย/{{path.short}}
+        <button v-bind:id="'tooltip-copy-'+path.id" class="copy-button mdl-button mdl-js-button mdl-button--icon">
+          <i class="icon material-icons"  v-on:click="copyToClipBoard(path.short)">content_copy</i>
+        </button>
+        <div class="mdl-tooltip" v-bind:data-mdl-for="'tooltip-copy-'+path.id" >
+          คัดลอกลิงก์ย่อ
+        </div>
+        <div v-if="deleteable" style="display:inline-block">
+          <button v-if="!pathRemoveConfirm" class="copy-button mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="confirmRemovePath">
+            <i class="icon material-icons">delete</i>
+          </button>
+          <button v-if="pathRemoveConfirm" class="copy-button mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="cancleRemovePath">
+            <i class="icon material-icons">close</i>
+          </button>
+          <button v-if="pathRemoveConfirm" class="copy-button mdl-button mdl-js-button mdl-button--icon" v-on:click.prevent="removePath">
+            <i class="icon material-icons">done</i>
+          </button>
+        </div>
+      </td>
+    </tr>
     </script>
     <script id="template-page-manage" type="text/x-vue-template">
         <main class="mdl-layout__content" style="flex: 1 0 auto;">
@@ -314,7 +347,8 @@
               email:"",
               type:"",
               shorten_quota:0
-            }
+            },
+            loggingOutFromOverride:false,
           }
         },
         mounted:function(){
@@ -333,6 +367,26 @@
           });
         },
         methods: {
+          logoutFromOverride: function(){
+            var self = this;
+            self.loggingOutFromOverride = true;
+            self.$nextTick(function () {
+              window.componentHandler.upgradeDom();
+            });
+            self.$http.delete('user/override').then(function(){
+              self.loggingOutFromOverride = false;
+              self.$nextTick(function () {
+                window.componentHandler.upgradeDom();
+              });
+              window.location.replace('/ผู้ดูแล');
+            },function(error){
+              try{
+                window.VueNotify.$emit('snackbar',error.body.error.message);
+              }catch(e){
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+              }
+            });
+          },
           logout: function(){
             this.$http.delete('auth').then(function(){
               window.VueNotify.$emit('onAuthenticate',null);
@@ -370,6 +424,7 @@
             this.$http.post('path',data).then(
               function(response){
                 window.VueNotify.$emit('newShortURL',{
+                  id: response.body.id,
                   full: url,
                   short: response.body.path,
                   date: new Date(),
@@ -384,10 +439,10 @@
                   if(error.body.error.code != 20){
                     throw "Not code 20";
                   }
-                  var short = error.body.error.message;
                   window.VueNotify.$emit('newShortURL',{
+                    id: error.body.error.message.id,
                     full: url,
-                    short: short,
+                    short: error.body.error.message.short,
                     date: new Date(),
                     countItem: false
                   });
@@ -445,6 +500,7 @@
             totalItem: 0,
             pathList: [],
             isLoading: true,
+            user: {}
           }
         },
         methods:{
@@ -468,13 +524,22 @@
               self.isLoading = false;
             });
           },
-          copyToClipBoard: function(shortLink){
-            var copied = window.copyTextToClipboard("https://ซับ.ไทย/"+shortLink);
-            if(copied){
-              window.VueNotify.$emit('snackbar','คัดลอกลิ้งค์ ซับ.ไทย/'+shortLink);
-            }else{
-              window.VueNotify.$emit('snackbar','เบราว์เซอร์นี้ไม่สามารถคัดลอกได้');
+          removeLinkById: function(id){
+            var pos = this.pathList.map(function(e) { return e.id; }).indexOf(id);
+            this.totalItem--;
+            if(pos != -1){
+              this.pathList.splice(pos,1);
             }
+            this.$http.delete('path/'+id).then(function(){
+              //Do nothing
+            },function(error){
+              try{
+                window.VueNotify.$emit('snackbar',error.body.error.message);
+              }catch(e){
+                console.error(error.bodyText);
+                window.VueNotify.$emit('snackbar',"พบข้อผิดพลาด "+error.bodyText);
+              }
+            });
           },
           next: function(){
             this.fetch(++this.page);
@@ -488,6 +553,7 @@
           self.isLoading = true;
           window.VueNotify.$on('onAuthenticate',function(user){
             if(user){
+              self.user = user;
               self.fetch(1);
               self.$http.get('path/count').then(function(response){
                 self.totalItem = response.body.count;
@@ -519,6 +585,38 @@
               }
             }
           });
+          window.VueNotify.$on('removeLinkById',function(id){
+            self.removeLinkById(id);
+          });
+        }
+      });
+      Vue.component('row-path', {
+        template: '#template-row-path',
+        props: ['path','deleteable'],
+        data: function(){
+          return {
+            pathRemoveConfirm: false
+          };
+        },
+        methods: {
+          removePath: function(){
+            this.pathRemoveConfirm = false;
+            window.VueNotify.$emit('removeLinkById',this.path.id);
+          },
+          confirmRemovePath: function(){
+            this.pathRemoveConfirm = true;
+          },
+          cancleRemovePath: function(){
+            this.pathRemoveConfirm = false;
+          },
+          copyToClipBoard: function(shortLink){
+            var copied = window.copyTextToClipboard("https://ซับ.ไทย/"+shortLink);
+            if(copied){
+              window.VueNotify.$emit('snackbar','คัดลอกลิ้งค์ ซับ.ไทย/'+shortLink);
+            }else{
+              window.VueNotify.$emit('snackbar','เบราว์เซอร์นี้ไม่สามารถคัดลอกได้');
+            }
+          },
         }
       });
       Vue.component('page-manage', {

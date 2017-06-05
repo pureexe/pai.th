@@ -8,6 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 **/
 class PathCtrl extends CI_Controller {
   private $user;
+  private $realUser;
   public function __construct()
   {
     parent::__construct();
@@ -18,14 +19,17 @@ class PathCtrl extends CI_Controller {
     $this->lang->load("subth","thai");
     $this->user = $this->User->get();
     if(empty($this->user)){
-      $this->Rest->error('login_is_required_for_this_action');
+      $this->Rest->error($this->lang->line('signin_required'),401);
       $this->output->_display();
       exit();
     }
     if($this->user['type'] == 'ban' || $this->user['type'] == 'disable'){
-      $this->Rest->error('your_account_is_suppend');
-      $this->output->_display();
-      exit();
+      $this->realUser = $this->User->getReal();
+      if(empty($this->realUser) || $this->realUser['type'] != 'admin'){
+        $this->Rest->error($this->lang->line('your_account_is_suppend'),401);
+        $this->output->_display();
+        exit();
+      }
     }
   }
   public function add()
@@ -44,15 +48,15 @@ class PathCtrl extends CI_Controller {
     if($this->form_validation->run() == FALSE){
       return $this->Rest->error(validation_errors(),1);
     }
-    $oldshort = $this->Path->getShortByFull($fullUrl,$this->user['id']);
+    $oldshort = $this->Path->getShortInfoByFull($fullUrl,$this->user['id']);
     if(!empty($oldshort)){
-      $this->Path->updateTime($oldshort,$this->user['id']);
+      $this->Path->updateTime($oldshort['short'],$this->user['id']);
       return $this->Rest->error($oldshort,20);
     }
     $this->load->driver('cache',array('adapter' => 'apc','backup' => 'file'));
     $quota_use = $this->cache->get('quota_shorten_'.$this->user['username']);
     $quota_use = empty($quota_use)?0:$quota_use;
-    if($this->user['type'] != 'admin' && $quota_use > $this->user['shorten_quota']){
+    if($this->user['type'] != 'admin' && $quota_use >= $this->user['shorten_quota']){
       return $this->Rest->error("Your quota is running out. Please contact admin for increase.",1);
     }
     $timeToMidNight = strtotime('tomorrow') - time();
@@ -67,9 +71,7 @@ class PathCtrl extends CI_Controller {
         $quota_use+1,
         strtotime('tomorrow')-time()
       );
-      return $this->Rest->render(array(
-        'path' => $path
-      ));
+      return $this->Rest->render($path);
     }catch(Exception $e){
       $this->Rest->error($e->getMessage());
     }
@@ -77,9 +79,12 @@ class PathCtrl extends CI_Controller {
   public function fullurl_check($fullURL)
   {
     $this->load->config('subth');
+    if(strpos($fullURL, '://') === false){
+      $fullURL = "http://".$fullURL;
+    }
     $hostname = $this->config->item('shorten_whitelist');
     if($this->user['type'] != 'admin' && !in_array(parse_url($fullURL, PHP_URL_HOST),$hostname)){
-      $this->form_validation->set_message('fullurl_check', 'Only accepeted domainlist');
+      $this->form_validation->set_message('fullurl_check', $this->lang->line('only_accept_domainlist'));
       return false;
     } else {
       return true;
@@ -119,6 +124,44 @@ class PathCtrl extends CI_Controller {
     }
     $this->Rest->render(array(
       'count' => $this->Path->count($uid),
+    ));
+  }
+  public function remove($pathId){
+    $this->user = $this->User->getReal();
+    if($this->user['type'] != 'admin'){
+      return $this->Rest->error($this->lang->line('only_admin_can_do'));
+    }
+    if($this->Path->remove($pathId)){
+      return $this->Rest->render(array('id' => intval($pathId)));
+    }else{
+      return $this->Rest->error($this->lang->line('cant_remove_non_exist_path'));
+    }
+  }
+  public function search()
+  {
+    if(empty($this->realUser)){
+      $this->realUser = $this->User->getReal();
+    }
+    if($this->realUser['type'] != 'admin'){
+      return $this->Rest->error($this->lang->line('only_admin_can_do'));
+    }
+    $q = $this->input->get('q');
+    $q = str_replace("http://","",$q);
+    $q = str_replace("https://","",$q);
+    $q = str_replace("ซับ.ไทย/","",$q);
+    if(empty($q)){
+      return $this->Rest->render(array(
+        "path" => array()
+      ));
+    }
+    $data = $this->Path->simpleSearch($q);
+    if(!empty($data)){
+      return $this->Rest->render(array(
+        'path' => $data
+      ));
+    }
+    return $this->Rest->render(array(
+      "path" => array()
     ));
   }
 }

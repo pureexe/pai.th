@@ -10,7 +10,7 @@ class Rest extends CI_Model  {
   {
     $this
       ->output
-      ->set_header('Access-Control-Allow-Origin: *')
+  //    ->set_header('Access-Control-Allow-Origin: *') //remvove because very dangerous for private api
       ->set_content_type('application/json')
       ->set_status_header($code)
       ->set_output(json_encode($data));
@@ -25,7 +25,7 @@ class Rest extends CI_Model  {
     );
     $this
       ->output
-      ->set_header('Access-Control-Allow-Origin: *')
+    //  ->set_header('Access-Control-Allow-Origin: *') //remove because very dangerous for private api
       ->set_content_type('application/json')
       ->set_status_header($statusCode)
       ->set_output(json_encode($data));
