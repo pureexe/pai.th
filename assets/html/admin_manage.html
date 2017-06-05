@@ -312,7 +312,9 @@
                 <td class="mdl-data-table__cell--non-numeric">{{path.note}}</td>
                 <td class="mdl-data-table__cell--non-numeric">{{path.full}}</td>
                 <td class="mdl-data-table__cell--non-numeric">{{path.short}}</td>
-                <td></td>
+                <td>
+                  {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}}
+                </td>
               </tr>
             </tbody>
             <tfoot>
