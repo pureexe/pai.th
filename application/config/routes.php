@@ -76,6 +76,9 @@ $route['api/v1/path/search']['get'] = 'Api/PathCtrl/search';
 $route['api/v1/path']['post'] = 'Api/PathCtrl/add';
 $route['api/v1/path/(:num)']['delete'] = 'Api/PathCtrl/remove/$1';
 
+$route['export/firebase'] = "Exporter/firebase";
+$route['export/jekyll'] = "Exporter/jekyll";
+
 $route['(.+)'] = 'RedirectorCtrl';
 $route['404_override'] = 'RedirectorCtrl/notfound';
 $route['translate_uri_dashes'] = FALSE;
