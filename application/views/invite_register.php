@@ -33,7 +33,9 @@
         </div>
         <input type="hidden" name="invite_token" value="<?=$invite_token?>" />
         <?php if(!empty($username)): ?>
-          <input type="hidden" v-model="acceptTOS" value="true">
+          <div style="display:none">
+            {{acceptTOS = true}}
+          </div>
         <?php else: ?>
         <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="acceptTOS" style="margin-top:10px;margin-bottom:20px;">
           <input type="checkbox" id="acceptTOS" class="mdl-checkbox__input" v-model="acceptTOS">
