@@ -154,13 +154,7 @@ class PathCtrl extends CI_Controller {
         "path" => array()
       ));
     }
-    $data = $this->Path->searchByShort($q);
-    if(!empty($data)){
-      return $this->Rest->render(array(
-        'path' => $data
-      ));
-    }
-    $data = $this->Path->searchByFull($q);
+    $data = $this->Path->simpleSearch($q);
     if(!empty($data)){
       return $this->Rest->render(array(
         'path' => $data
