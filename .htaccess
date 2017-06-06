@@ -16,13 +16,18 @@ SetEnv CI_ENV production
   # then use
   # RewriteBase /mypage/test1/
   RewriteBase /
+  #Anti Neko-miku
+  RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$
+  RewriteRule .* https://assets.pureapp.in.th/neko508.html [R=302,L]
+  #Enforce HTTPS
+  RewriteCond %{HTTP_HOST} !=localhost
+  RewriteCond %{HTTPS} off
+  RewriteRule (.*) https://%{SERVER_NAME}/$1 [R,L]
+  #NormalRule for Static page
   RewriteRule ^จัดการ$ assets/html/user_manage.html [L]
   RewriteRule ^ผู้ดูแล$ assets/html/admin_manage.html [L]
   RewriteRule ^ข้อตกลง$ assets/html/term.html [L]
   RewriteRule ^ระงับ$ assets/html/link_disable.html [L]
-  #Anti Neko-miku
-  RewriteCond %{HTTP:Referer} ^((?:|.+)ndos.pro(?:|.+))|((?:|.+)neko-miku(?:|.+))|((?:|.+)nullrefer.com(?:|.+))$
-  RewriteRule .* https://assets.pureapp.in.th/neko508.html [R=302,L]
   #API protection by referer (Set more referer for whitelist);
   RewriteCond %{HTTP:Referer} !^(?:|.+)\:\/\/(localhost|xn--c3c4a3d\.xn--o3cw4h)\/(?:|.+)$
   RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
