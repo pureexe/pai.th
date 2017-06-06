@@ -1,6 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+* use real php header function instead $CI->output->set_header
+* because url helper isn't flush output.
+**/
+
 if (!function_exists('use_cache_header'))
 {
   function use_cache_header($time = 0)
@@ -8,11 +13,10 @@ if (!function_exists('use_cache_header'))
     if(ENVIRONMENT !== 'production'){
       return;
     }
-    $CI = & get_instance();
     if(empty($time)){
-      $CI->output->set_header("Cache-Control: max-age=31536000, min-fresh=7200, public");
+      header("Cache-Control: max-age=31536000, min-fresh=7200, public");
     }else{
-      $CI->output->set_header("Cache-Control: max-age=".$time.", min-fresh=".$time.", public");
+      header("Cache-Control: max-age=".$time.", min-fresh=".$time.", public");
     }
   }
 }
@@ -24,7 +28,6 @@ if (!function_exists('use_nocache_header'))
     if(ENVIRONMENT !== 'production'){
       return;
     }
-    $CI = & get_instance();
-    $CI->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
+    header('Cache-Control: no-store, no-cache, must-revalidate');
   }
 }
