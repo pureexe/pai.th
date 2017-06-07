@@ -22,6 +22,7 @@ class AdminCtrl extends CI_Controller {
 	}
   public function remove($uid)
   {
+    $this->load->model('Path');
     if(!$this->User->isExist($uid)){
       return $this->Rest->error($this->lang->line("cant_remove_non_exist_user"));
     }
