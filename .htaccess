@@ -29,7 +29,7 @@ SetEnv CI_ENV production
   RewriteRule ^ข้อตกลง$ assets/html/term.html [L]
   RewriteRule ^ระงับ$ assets/html/link_disable.html [L]
   #API protection by referer (Set more referer for whitelist);
-  RewriteCond %{HTTP:Referer} !^(?:|.+)\:\/\/(localhost|xn--c3c4a3d\.xn--o3cw4h)\/(?:|.+)$
+  RewriteCond %{HTTP:Referer} !^(?:|.+)\:\/\/(localhost|xn--c3c4a3d\.xn--o3cw4h|ซับ\.ไทย)\/(?:|.+)$
   RewriteRule ^api/(|.+)$ assets/html/api_denied.html [L]
   #Rewrite Homepage use static
   RewriteRule ^$ assets/html/main.html
