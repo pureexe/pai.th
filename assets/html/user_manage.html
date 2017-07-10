@@ -66,19 +66,42 @@
           margin-right: auto;
           margin-left: auto;
         }
+        .path-width{
+          max-width: calc(100vw - 300px);
+          overflow: auto;
+        }
         @media (min-width: 768px) {
           .container {
             width: 750px;
+          }
+          .path-width{
+            max-width: calc(750px - 235px);
+          }
+        }
+        @media (min-width: 839px) {
+          .path-width{
+            max-width: calc(750px - 340px);
           }
         }
         @media (min-width: 992px) {
           .container {
             width: 970px;
           }
+          .path-width{
+            max-width: calc(970px - 340px);
+          }
         }
         @media (min-width: 1200px) {
           .container {
             width: 1170px;
+          }
+          .path-width{
+            max-width: calc(1170px - 340px);
+          }
+        }
+        @media (max-width: 360px) {
+          .hide-on-360{
+            display: none;
           }
         }
         .red{
@@ -190,7 +213,7 @@
         <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width:100%;">
           <thead style="background-color: #f5f5f5;">
             <tr>
-              <th class="mdl-data-table__cell--non-numeric mdl-cell--hide-phone">ลิงก์เดิม</th>
+              <th class="mdl-data-table__cell--non-numeric hide-on-360">ลิงก์เดิม</th>
               <th class="mdl-data-table__cell--non-numeric mdl-cell--hide-phone  mdl-cell--hide-tablet">สร้างเมื่อ</th>
               <th class="mdl-data-table__cell--non-numeric">ลิงก์สั้น</th>
             </tr>
@@ -228,8 +251,10 @@
     </script>
     <script id="template-row-path" type="text/x-vue-template">
     <tr>
-      <td class="mdl-data-table__cell--non-numeric mdl-cell--hide-phone">
-        {{ path.full }}
+      <td class="mdl-data-table__cell--non-numeric hide-on-360">
+        <div class="path-width">
+          {{ path.full }}
+        </div>
       </td>
       <td class="mdl-data-table__cell--non-numeric mdl-cell--hide-phone mdl-cell--hide-tablet">
         {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}}
