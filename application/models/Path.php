@@ -197,7 +197,7 @@ class Path extends CI_Model {
         ->select('short')
         ->from('path')
         ->where('id',$pathId)
-        ->get()->result_array();
+        ->get()->result_array()[0];
       if(!empty($p)){
         $this->load->model('PathFirebase');
         $this->PathFirebase->unlink($p['short']);
