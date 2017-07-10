@@ -76,7 +76,7 @@ class Exporter extends CI_Controller {
         mkdir('_output/jekyll/_path/'.$folder, 0777, true);
       }
       $file = fopen('_output/jekyll/_path/'.$folder.'/'.$filename.'.md', 'w') or die('unable to open file!');
-      fwrite($file,'---'.PHP_EOL.'full:"'.$path['full'].'"'.PHP_EOL.'---');
+      fwrite($file,'---'.PHP_EOL.'full: "'.$path['full'].'"'.PHP_EOL.'---');
       fclose($file);
     }
     echo("export complete.". PHP_EOL);
