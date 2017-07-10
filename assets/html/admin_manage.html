@@ -339,6 +339,7 @@
     //Intial Vue Environment
     window.VueNotify = new Vue();
     Vue.http.options.emulateJSON = true;
+    Vue.http.options.emulateHTTP = true;
     Vue.http.options.root = '/api/v1/';
     Vue.http.headers.common['Cache-Control'] = 'no-cache';
     //Util copyToClipBoard

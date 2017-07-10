@@ -1,5 +1,12 @@
 <?php
 /**
+* Sub.th modifies
+**/
+// Support emulateHTTP for legacy web servers
+if(isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])){
+	$_SERVER['REQUEST_METHOD'] = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'];
+}
+/**
  * CodeIgniter
  *
  * An open source application development framework for PHP
