@@ -1,5 +1,5 @@
 #Change CI_ENV from developemnt to production if it running on real server
-SetEnv CI_ENV production
+#SetEnv CI_ENV production
 
 <Limit GET POST DELETE PUT>
   Order deny,allow
