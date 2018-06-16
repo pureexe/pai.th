@@ -32,6 +32,19 @@
     .red{
       color: red;
     }
+    dialog {
+      position: fixed;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+    dialog + .backdrop {
+      background-color: rgba(0,0,0,0.3);
+      top: 0;
+      left: 0;
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+    }
     </style>
   </head>
   <body>
@@ -46,6 +59,7 @@
       <snackbar></snackbar>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.9/dialog-polyfill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.3/vue.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.3.3/vue-resource.min.js"></script>
     <script id="template-header" type="text/x-vue-template">
@@ -142,6 +156,13 @@
         </tr>
       </thead>
       <tbody>
+        <tr v-show='isLoading'>
+          <td colspan="6" class="mdl-data-table__cell--non-numeric">
+            <center>
+              <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+            </center>
+          </td>
+        </tr>
         <row-user v-for="user in userList" :key="user.id" :user="user" ></row-user>
       </tbody>
       <tfoot>
@@ -449,7 +470,7 @@
           if(user){
             this.$http.get('user/list?page=1&limit=1000').then(function(response){
               self.userList = response.body.user;
-              isLoading = false;
+              self.isLoading = false;
               self.$nextTick(function () {
                 window.componentHandler.upgradeDom();
               });
@@ -529,6 +550,11 @@
           self.shorten_quota = self.user.shorten_quota;
           self.$nextTick(function () {
             window.componentHandler.upgradeDom();
+            var selectors = ['ban_note_dialog_','shorten_quota_dialog_','note_dialog_','removeuser_dialog_']
+            selectors.forEach(function(selector){
+              dialog = document.querySelector('#'+selector+self.user.id);
+              window.dialogPolyfill.registerDialog(dialog);
+            });
           });
         }
       },
@@ -742,10 +768,18 @@
           }
           this.dialog_error_message = "";
           window.VueNotify.$emit('doAddUser',{note:this.note});
-          this.username = "";
-          this.email = "";
+          this.note = "";
           document.querySelector('#addUserDialog').close();
         }
+      },
+      mounted: function(){
+        var self = this;
+        window.VueNotify.$on('onAuthenticate',function(){
+          self.$nextTick(function () {
+            dialog = document.querySelector('#addUserDialog');
+            window.dialogPolyfill.registerDialog(dialog);
+          });
+        });
       }
     });
     Vue.component('page-search',{
