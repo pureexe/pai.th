@@ -12,7 +12,7 @@ class AuthCtrl extends CI_Controller {
   public function signin()
   {
     $this->load->database()->model('Rest');
-    $this->lang->load('subth', 'thai');
+    $this->lang->load('paith', 'thai');
     $username = $this->input->post('username');
     $password = $this->input->post('password');
     if(empty($username) || empty($password)){
@@ -48,7 +48,7 @@ class AuthCtrl extends CI_Controller {
   {
     $this->load->database()->model('Rest');
     $this->load->library('session');
-    $this->lang->load('subth', 'thai');
+    $this->lang->load('paith', 'thai');
     $this->session->unset_userdata('userid');
     $this->session->unset_userdata('userid_override');
     session_write_close();

@@ -7,7 +7,7 @@ class InviteCtrl extends CI_Controller {
   {
     parent::__construct();
 		$this->load->model('User');
-		$this->lang->load('subth','thai');
+		$this->lang->load('paith','thai');
 	}
 	public function register()
 	{

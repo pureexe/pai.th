@@ -14,7 +14,7 @@ class OverrideCtrl extends CI_Controller {
 	{
     parent::__construct();
     $this->load->database()->model("Rest");
-    $this->lang->load("subth","thai");
+    $this->lang->load("paith","thai");
     $this->load->library('session');
     try{
       $this->userid = $this->session->userid;

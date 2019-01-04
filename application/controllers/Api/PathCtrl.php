@@ -16,7 +16,7 @@ class PathCtrl extends CI_Controller {
       ->model('Rest')
       ->model('Path')
       ->model('User');
-    $this->lang->load("subth","thai");
+    $this->lang->load("paith","thai");
     $this->user = $this->User->get();
     if(empty($this->user)){
       $this->Rest->error($this->lang->line('signin_required'),401);
@@ -78,7 +78,7 @@ class PathCtrl extends CI_Controller {
   }
   public function fullurl_check($fullURL)
   {
-    $this->load->config('subth');
+    $this->load->config('paith');
     if(strpos($fullURL, '://') === false){
       $fullURL = "http://".$fullURL;
     }

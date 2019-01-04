@@ -12,7 +12,7 @@ class AdminCtrl extends CI_Controller {
     parent::__construct();
     $this->load->model("User")->model("Rest");
     $this->load->library('form_validation');
-    $this->lang->load("subth","thai");
+    $this->lang->load("paith","thai");
     $this->user = $this->User->getReal();
     if(empty($this->user) || $this->user['type'] != 'admin'){
       $this->Rest->error($this->lang->line("only_admin_can_do"));

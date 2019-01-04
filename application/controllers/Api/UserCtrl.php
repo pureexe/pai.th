@@ -37,7 +37,7 @@ class UserCtrl extends CI_Controller {
         $this->Rest->render($this->user);
       }
     }else{
-      $this->lang->load('subth','thai');
+      $this->lang->load('paith','thai');
       $this->Rest->error($this->lang->line('signin_required'));
     }
   }
