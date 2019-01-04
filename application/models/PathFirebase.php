@@ -13,7 +13,7 @@ class PathFirebase extends CI_Model {
   public function __construct()
   {
     parent::__construct();
-    $this->load->config('subth');
+    $this->load->config('paith');
     $this->firebase = (new Firebase\Factory)
       ->withCredentials(__DIR__.'/../config/'.$this->config->item('firebase_config'))
       ->withDatabaseUri($this->config->item('firebase_database'))

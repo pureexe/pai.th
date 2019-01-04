@@ -9,7 +9,7 @@ class Path extends CI_Model {
   {
     parent::__construct();
     $this->load->database();
-    $this->load->config('subth');
+    $this->load->config('paith');
   }
   /**
   * สำหรับดึง URL เต็มจากพาธของลิงค์ย่อ

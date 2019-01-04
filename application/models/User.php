@@ -67,7 +67,7 @@ class User extends CI_Model {
   **/
   public function inviteTokenForNewUser($note = '')
   {
-    $this->load->config('subth');
+    $this->load->config('paith');
     $token = $this->getUniqueInvite();
     $data = array(
       'type' => 'user',
