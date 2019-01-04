@@ -9,6 +9,7 @@ class Path extends CI_Model {
   {
     parent::__construct();
     $this->load->database();
+    $this->load->config('subth');
   }
   /**
   * สำหรับดึง URL เต็มจากพาธของลิงค์ย่อ
@@ -160,8 +161,10 @@ class Path extends CI_Model {
   **/
   public function point($fullUrl,$shortUrl,$uid)
   {
-    $this->load->model('PathFirebase');
-    $this->PathFirebase->point($fullUrl,$shortUrl);
+    if($config['firebase_backup']){
+      $this->load->model('PathFirebase');
+      $this->PathFirebase->point($fullUrl,$shortUrl);  
+    }
     $this->db->insert('path',array(
       'owner' => empty($uid)?0:$uid,
       'full' => $fullUrl,
@@ -198,7 +201,7 @@ class Path extends CI_Model {
         ->from('path')
         ->where('id',$pathId)
         ->get()->result_array()[0];
-      if(!empty($p)){
+      if(!empty($p) && $config['firebase_backup']){
         $this->load->model('PathFirebase');
         $this->PathFirebase->unlink($p['short']);
       }

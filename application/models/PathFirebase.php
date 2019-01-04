@@ -13,8 +13,9 @@ class PathFirebase extends CI_Model {
   public function __construct()
   {
     parent::__construct();
+    $this->load->config('subth');
     $this->firebase = (new Firebase\Factory)
-      ->withCredentials(__DIR__.'/../config/subs-e3db8-firebase-adminsdk-zz64o-b0b7281d2c.json')
+      ->withCredentials(__DIR__.'/../config/'.$config['firebase_config'])
       ->withDatabaseUri('https://subs-e3db8.firebaseio.com')
       ->create();
     $this->database = $this->firebase->getDatabase();
