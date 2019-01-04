@@ -65,7 +65,7 @@
     <script id="template-header" type="text/x-vue-template">
     <header class="mdl-color--primary mdl-shadow--2dp" >
       <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;">
-        <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
+        <span class="mdl-layout-title" style="color:#fff;font-family: Athiti, sans-serif;">ไป.ไทย</span>
         <div class="mdl-layout-spacer"></div>
         <div v-show="user.username != ''">
           <button class="mdl-button mdl-js-button mdl-button--icon" style="color:#fff;margin-right:15px;" v-on:click.prevent="search">
@@ -560,7 +560,7 @@
       },
       methods: {
         copyInvite: function(){
-          var copied = window.copyTextToClipboard("https://ซับ.ไทย/สมัคร?บัตรเชิญ="+this.user.invite_token);
+          var copied = window.copyTextToClipboard("https://ไป.ไทย/สมัคร?บัตรเชิญ="+this.user.invite_token);
           if(copied){
             window.VueNotify.$emit('snackbar',"คัดลอกบัตรเชิญของ "+((this.user.username)?this.user.username:this.user.note)+" แล้ว");
           }else{
