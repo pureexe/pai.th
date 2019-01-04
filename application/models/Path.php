@@ -161,7 +161,7 @@ class Path extends CI_Model {
   **/
   public function point($fullUrl,$shortUrl,$uid)
   {
-    if($config['firebase_backup']){
+    if($this->config->item('firebase_backup')){
       $this->load->model('PathFirebase');
       $this->PathFirebase->point($fullUrl,$shortUrl);  
     }
@@ -201,7 +201,7 @@ class Path extends CI_Model {
         ->from('path')
         ->where('id',$pathId)
         ->get()->result_array()[0];
-      if(!empty($p) && $config['firebase_backup']){
+      if(!empty($p) && $this->config->item('firebase_backup')){
         $this->load->model('PathFirebase');
         $this->PathFirebase->unlink($p['short']);
       }

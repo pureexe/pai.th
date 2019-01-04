@@ -140,7 +140,7 @@
     <script id="template-header" type="text/x-vue-template">
       <header class="" style="box-shadow:none;">
         <div class="mdl-layout__header-row" style="padding-left:20px;padding-right:20px;background-color:#fff">
-          <span class="mdl-layout-title" style="color:#333;font-family: Athiti, sans-serif;">ซับ.ไทย</span>
+          <span class="mdl-layout-title" style="color:#333;font-family: Athiti, sans-serif;">ไป.ไทย</span>
           <div class="mdl-layout-spacer" style="text-align:center">
             <div v-if="user.override_by">
               คุณกำลังเข้าใช้งานในฐานะของ {{user.note}}
@@ -274,7 +274,7 @@
         {{path.date.getDate()}}/{{path.date.getMonth()+1}}/{{path.date.getFullYear()}} {{path.date.getHours()<10?'0'+path.date.getHours():path.date.getHours()}}:{{path.date.getMinutes()<10?'0'+path.date.getMinutes():path.date.getMinutes()}}
       </td>
       <td class="mdl-data-table__cell--non-numeric">
-        ซับ.ไทย/{{path.short}}
+        ไป.ไทย/{{path.short}}
         <button v-bind:id="'tooltip-copy-'+path.id" class="copy-button mdl-button mdl-js-button mdl-button--icon" v-on:click="copyToClipBoard(path.short)">
           <i class="icon material-icons">content_copy</i>
         </button>
@@ -309,7 +309,7 @@
     <script id="template-page-signin" type="text/x-vue-template">
       <main class="mdl-layout__content" style="flex: 1 0 auto;">
         <div style="overflow: hidden;position: absolute;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;flex-direction: column;">
-          <h1 style="font-family: 'Athiti', sans-serif;margin-top: 0px;">ซับ.ไทย</h1>
+          <h1 style="font-family: 'Athiti', sans-serif;margin-top: 0px;">ไป.ไทย</h1>
           <div class="card mdl-card mdl-shadow--2dp" style="padding:20px;width: auto;max-width: 320px;min-height: 0;">
             <form action="" method="post" v-on:submit.prevent="onSubmit">
               <div class="mdl-textfield mdl-js-textfield" style="display:block">
@@ -463,6 +463,7 @@
             }
             this.$http.post('path',data).then(
               function(response){
+                console.log(response);
                 window.VueNotify.$emit('newShortURL',{
                   id: response.body.id,
                   full: url,
@@ -510,8 +511,8 @@
             if(this.shortURL.indexOf("://") != -1){
               return this.CustomLinkDialogErrorMessage = "ไม่อนุญาตให้มี URL shame (://) ในลิงก์";
             }
-            if(this.shortURL.indexOf("ซับ.ไทย") != -1){
-              return this.CustomLinkDialogErrorMessage = "ไม่อนุญาตให้มีคำว่า ซับ.ไทย ในลิงก์";
+            if(this.shortURL.indexOf("ไป.ไทย") != -1){
+              return this.CustomLinkDialogErrorMessage = "ไม่อนุญาตให้มีคำว่า ไป.ไทย ในลิงก์";
             }
             this.CustomLinkDialogErrorMessage = "";
             document.querySelector('#CustomLinkDialog').close();
@@ -654,9 +655,9 @@
             this.pathRemoveConfirm = false;
           },
           copyToClipBoard: function(shortLink){
-            var copied = window.copyTextToClipboard("https://ซับ.ไทย/"+shortLink);
+            var copied = window.copyTextToClipboard("https://ไป.ไทย/"+shortLink);
             if(copied){
-              window.VueNotify.$emit('snackbar','คัดลอกลิ้งค์ ซับ.ไทย/'+shortLink);
+              window.VueNotify.$emit('snackbar','คัดลอกลิ้งค์ ไป.ไทย/'+shortLink);
             }else{
               window.VueNotify.$emit('snackbar','เบราว์เซอร์นี้ไม่สามารถคัดลอกได้');
             }
