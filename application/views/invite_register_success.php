@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/assets/css/invite_register.css" />
   </head>
   <body>
-    <h1>ซับ.ไทย</h1>
+    <h1>ไป.ไทย</h1>
     <div class="card mdl-card mdl-shadow--2dp" id="app">
       <div style="display:block;padding-top: 10px;padding-bottom: 20px;">
         <center>การลงทะเบียนเสร็จเรียบร้อย</center>

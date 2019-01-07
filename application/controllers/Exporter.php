@@ -35,7 +35,7 @@ class Exporter extends CI_Controller {
       $path['short'] = str_replace('/','|',$path['short']);
       $output[$path['short']] = $path['full'];
     }
-    $file = fopen('_output/firebase/subth_export.json', 'w') or die('unable to open file!');
+    $file = fopen('_output/firebase/paith_export.json', 'w') or die('unable to open file!');
     fwrite($file, json_encode(array('path' => $output)));
     fclose($file);
     echo("export complete.". PHP_EOL);
