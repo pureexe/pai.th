@@ -1,2 +1,2 @@
 var path = window.location.pathname;
-window.location.replace("https://จุติ.ซับ.ไทย/"+data);
+window.location.replace("<ใส่ กลับ.ไทย โดเมนที่นี่>"+data);

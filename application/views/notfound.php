@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <html lang="th">
   <head>
-    <title>ไม่พบหน้า - ซับ.ไทย</title>
+    <title>ไม่พบหน้า - ไป.ไทย</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Athiti" rel="stylesheet">

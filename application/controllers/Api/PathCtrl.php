@@ -148,7 +148,7 @@ class PathCtrl extends CI_Controller {
     $q = $this->input->get('q');
     $q = str_replace("http://","",$q);
     $q = str_replace("https://","",$q);
-    $q = str_replace("ซับ.ไทย/","",$q);
+    $q = str_replace("ไป.ไทย/","",$q);
     if(empty($q)){
       return $this->Rest->render(array(
         "path" => array()

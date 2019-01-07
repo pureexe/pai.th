@@ -32,7 +32,7 @@ class Path extends CI_Model {
     }
     //ถ้าหากโดนแบนให้ระงับลิ้งค์ทันที
     if($data[0]['status'] == 'ban'){
-      return 'https://ซับ.ไทย/ระงับ';
+      return 'https://ไป.ไทย/ระงับ';
     }else{
       return $data[0]['full'];
     }
