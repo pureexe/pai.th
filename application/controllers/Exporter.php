@@ -17,7 +17,7 @@ class Exporter extends CI_Controller {
     if(!is_cli()){
       show_404();
     }
-    echo('sub.th to Firebase Exporter'.PHP_EOL);
+    echo('pai.th to Firebase Exporter'.PHP_EOL);
     echo('============================'.PHP_EOL);
     if(!file_exists('_output/firebase')) {
       mkdir('_output/firebase', 0777, true);
@@ -39,7 +39,7 @@ class Exporter extends CI_Controller {
     fwrite($file, json_encode(array('path' => $output)));
     fclose($file);
     echo("export complete.". PHP_EOL);
-    echo("please upload file at _output/firebase/subth_export.json to firebase");
+    echo("please upload file at _output/firebase/paith_export.json to firebase");
   }
   /**
   * Generate backup for jekyll

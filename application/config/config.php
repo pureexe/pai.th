@@ -378,7 +378,7 @@ $config['encryption_key'] = hex2bin('9b19d9c53331f9cead4040d78bc9a9a5'); // Don'
 |
 */
 $config['sess_driver'] = 'files';
-$config['sess_cookie_name'] =  'subth_session'; // default 'ci_session';
+$config['sess_cookie_name'] =  'paith_session'; // default 'ci_session';
 $config['sess_expiration'] = 31557600; //default 7200;
 $config['sess_save_path'] = 'application/cache/session';// NULL;
 $config['sess_match_ip'] = FALSE;
@@ -489,7 +489,7 @@ $config['compress_output'] = FALSE;
 |
 */
 $config['time_reference'] = 'gmt';
-date_default_timezone_set('Asia/Bangkok');  //sub.th user is bangkok
+date_default_timezone_set('Asia/Bangkok');  //pai.th user is bangkok
 
 /*
 |--------------------------------------------------------------------------

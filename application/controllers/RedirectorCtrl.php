@@ -22,7 +22,7 @@ class RedirectorCtrl extends CI_Controller {
     if(!empty($fullUrl)){
       $this->load
         ->helper('url')
-        ->config('subth');
+        ->config('paith');
       use_cache_header();
       redirect($fullUrl, 'location', $this->config->item('http_redirect_code'));
     }else{
